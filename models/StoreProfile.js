@@ -4,7 +4,7 @@ require('mongoose-type-url');
 let StoreProfileSchema = new mongoose.Schema({
     MenuImageUpload: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'MenuImageUpload',
+        ref: 'MenuImageUpload'
     },
     StoreType: {
         type: String,
@@ -14,15 +14,16 @@ let StoreProfileSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    MenuUrl: {
-        work: mongoose.SchemaType.Url,
-        profile: mongoose.SchemaType.Url
-    },
+    // MenuUrl: {
+    //     work: mongoose.SchemaType.Url,
+    //     profile: mongoose.SchemaType.Url
+    // },
     Phone: {
         type: String,
     },
     RestDate: {
-        type: Date,
+        type: String,
+        enum: ["Mon", "Tue", "Wed", "Thu", "Fir", "Sat", "Sun"]
     },
     AverageScore: {
         type: Number,
