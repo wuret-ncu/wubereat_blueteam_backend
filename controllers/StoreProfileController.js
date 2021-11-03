@@ -1,11 +1,12 @@
 var StoreProfile = require('../models/StoreProfile');
 
-exports.create = (req, res, ) => {
+exports.create = (req, res) => {
     const store = new StoreProfile({
         StoreType: req.body.StoreType,
         StoreName: req.body.StoreName,
         Phone: req.body.Phone,
         RestDate: req.body.RestDate,
+        MenuUrl: req.body.MenuUrl,
     });
     store
         .save()

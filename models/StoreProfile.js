@@ -8,7 +8,8 @@ let StoreProfileSchema = new mongoose.Schema({
     },
     StoreType: {
         type: String,
-        enum: ["Foods", "Drinks"]
+        enum: ["Foods", "Drinks"],
+        default: "Foods"
     },
     StoreName: {
         type: String,
@@ -23,7 +24,11 @@ let StoreProfileSchema = new mongoose.Schema({
     },
     RestDate: {
         type: String,
-        enum: ["Mon", "Tue", "Wed", "Thu", "Fir", "Sat", "Sun"]
+        enum: ["Nan", "Mon", "Tue", "Wed", "Thu", "Fir", "Sat", "Sun"],
+        default: "Nan"
+    },
+    MenuUrl: {
+        type: String,
     },
     AverageScore: {
         type: Number,

@@ -13,20 +13,15 @@ const ShoppingCartSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Bill',
     }],
-    Meals: {
-        type: String,
+    Meals: [{
+        type: Object,
         required: true,
-    },
+    },],
     Price: {
         type: Number,
         default: 0,
-    },
-    Date: {
-        type: Date,
-        required: true,
     }
+}, {
+    timestamps: true
 });
-
-// Compile Schema 變成 Model，如此可以透過這個 Model 建立和儲存 document
-// 會在 mongo 中建立名為 shoppingcart 的 collection
-module.exports = mongoose.model('ShoppingCart',ShoppingCartSchema);
+module.exports = mongoose.model('ShoppingCart', ShoppingCartSchema);
