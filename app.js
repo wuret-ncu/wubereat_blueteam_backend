@@ -14,7 +14,7 @@ console.log("test 2");
 app.get('/', (req, res) => {
     res.json({ message: "Server is running 😉"});
 });
-
+require("./routes/UserProfileRouter")(app);
 require("./routes/StoreProfileRouter")(app);
 require("./routes/ShoppingCartRouter")(app);
 

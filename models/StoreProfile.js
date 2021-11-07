@@ -6,11 +6,11 @@ let StoreProfileSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MenuImageUpload'
     },
-    StoreType: {
-        type: String,
+    StoreType: [{
+        type: Array,
         enum: ["Foods", "Drinks"],
         default: "Foods"
-    },
+    }],
     StoreName: {
         type: String,
         required: true,
@@ -22,11 +22,11 @@ let StoreProfileSchema = new mongoose.Schema({
     Phone: {
         type: String,
     },
-    RestDate: {
-        type: String,
+    RestDate: [{
+        type: Array,
         enum: ["Nan", "Mon", "Tue", "Wed", "Thu", "Fir", "Sat", "Sun"],
         default: "Nan"
-    },
+    }],
     MenuUrl: {
         type: String,
     },
