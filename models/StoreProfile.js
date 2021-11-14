@@ -30,9 +30,9 @@ let StoreProfileSchema = new mongoose.Schema({
     MenuUrl: {
         type: String,
     },
-    AverageScore: {
-        type: Number,
-    }
+    // AverageScore: {
+    //     type: Number,
+    // }
 });
 
 // Compile Schema 變成 Model，如此可以透過這個 Model 建立和儲存 document
