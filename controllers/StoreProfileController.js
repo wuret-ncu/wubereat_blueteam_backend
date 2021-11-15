@@ -61,7 +61,7 @@ exports.findType = (req, res) => {
     StoreProfile.aggregate([
         {
             $match: {
-                "StoreType": {"$in": [req.params.type]}
+                "StoreType": {"$in": [[req.params.type]]}
             }
         }
     ])
