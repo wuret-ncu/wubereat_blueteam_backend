@@ -16,6 +16,7 @@ const UserProfileSchema = new mongoose.Schema({
     },
     TotalSpend: {
         type: Number,
+        default: 0,
     },
     // cart: {
     //     items: [{

@@ -1,6 +1,10 @@
 var StoreProfile = require('../models/StoreProfile');
 
 exports.create = (req, res) => {
+    let newPath = `public/images/uploads/${req.file.originalname}`
+    fs.rename(req.file.path, newPath, () => {
+        res.json({result: 'image uploaded successful'})
+    })
     const store = new StoreProfile({
         StoreType: req.body.StoreType,
         StoreName: req.body.StoreName,

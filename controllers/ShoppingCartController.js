@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 var ShoppingCart = require('../models/ShoppingCart')
 
 exports.create = (req, res) => {
-
     const cart = new ShoppingCart({
         userprofiles: req.body.userprofiles,
         storeprofiles: req.body.storeprofiles,
@@ -25,8 +24,9 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-    
-    ShoppingCart.find()
+    let userId = '617b866fb32fcc5a5855e95c';
+    // let userId = req.cookies.userId;
+    ShoppingCart.find({userId})
         .then((data) => {
             res.send(data);
         })
@@ -113,4 +113,26 @@ exports.findFavorite = (req, res) => {
         console.log(data);
         res.send(data)
     })
+}
+
+exports.removeCart = async (req, res) => {
+    ShoppingCart.findByIdAndDelete(req.params.cartId)
+    .then((data) => {
+        if(!data) {
+            return res.status(404),send({
+                cart: "Cart not found with id " + req.params.cartId,
+            });
+        }
+        res.send("Cart id: " + req.params.cartId + " is deleted! "  + data);
+    })
+    .catch((err) => {
+        if (err.kind === "String") {
+            return res.status(404).send({
+                cart: "Cart not found with id " + req.params.cartId,
+            });
+        }
+        return res.status(500).send({
+            cart: "Cart not found with id " + req.params.cartId,
+        });
+    });
 }
