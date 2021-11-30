@@ -94,10 +94,10 @@ exports.findFavorite = (req, res) => {
             }
         },
         {
-            "$unwind": {"path": "$storeprofiles"}
+            "$unwind": "$storeprofiles"
         },
         {
-            "$unwind": {"path": "$userprofiles"}
+            "$unwind": "$userprofiles"
         },
         // ↓ 將店家依被點的次數由大到小排序 ↓ //
         {
@@ -107,6 +107,17 @@ exports.findFavorite = (req, res) => {
         // {
         //     $limit: 1
         // },
+        {
+            $project: {
+                Store_info: {
+                    StoreName: 1
+                },
+                User_info: {
+                    UserName: 1
+                },
+                Frequency: 1
+            }
+        }
     ])
     .exec((err, data)=>{
         if(err) throw err;

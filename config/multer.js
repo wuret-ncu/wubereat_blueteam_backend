@@ -1,10 +1,11 @@
 const multer = require("multer");
 const path = require("path");
 
+
 //image upload
 const storage = multer.diskStorage({
     destination: (req, res, cb) => {
-         cb(null, path.join("./files/"));
+         cb(null, path.join("./images/"));
     },
     filename: (req, file, cb) => {
         cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);    // 獲得檔案的原始名稱（名稱＋檔案格式）
@@ -13,11 +14,11 @@ const storage = multer.diskStorage({
 
 // checking file type
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith('image')) {
-        cb(null, true);    // 若接受該檔案：呼叫時帶入 true
-    } else {
-        cb(new Error('Not an image! Please upload an image.', 400), false);    // 輸出錯誤訊息
+    if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
+        req.fileValidationError = 'Only image files are allowed!';
+        return cb(new Error('Only image files are allowed!'), false);
     }
+    cb(null, true);
 };
 
 exports.upload = multer({

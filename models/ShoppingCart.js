@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ShoppingCartSchema = new mongoose.Schema({
+let ShoppingCartSchema = new mongoose.Schema({
     userprofiles: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserProfile',

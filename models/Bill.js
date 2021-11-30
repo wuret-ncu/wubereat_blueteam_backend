@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
+var ShoppingCart = require("../models/ShoppingCart")
 
 const BillSchema = new mongoose.Schema({
-    ShoppingCarts: [ShoppingCartSchema],
-    TotalPrice: {
-        type: Number,
-        default: 0,
-    }
+    shoppingcarts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ShopingCart',
+        required: true,
+    }]
 }, {
     timestamps: true
 });

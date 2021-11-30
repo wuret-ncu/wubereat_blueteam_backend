@@ -12,7 +12,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
 
-app.use('/files', express.static("files"));
+// app.use(express.static(__dirname,'public'));
+app.use('/images', express.static('images'));
 
 app.get('/', (req, res) => {
     res.json({ message: "Server is running 😉"});
@@ -21,6 +22,7 @@ require("./routes/UserProfileRouter")(app);
 require("./routes/StoreProfileRouter")(app);
 require("./routes/ShoppingCartRouter")(app);
 require("./routes/MenuImageUploadRouter")(app);
+require("./routes/BillRouter")(app);
 
 // Set port, Listen on server
 const PORT = process.env.PORT || 8080;

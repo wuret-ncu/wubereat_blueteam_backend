@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const MenuImageUploadSchema = new mongoose.Schema({
     image: {
-        type: String,
+        type: Buffer,
         required: true,
     }
 }, {
