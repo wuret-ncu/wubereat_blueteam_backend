@@ -1,11 +1,12 @@
 var StoreProfile = require('../models/StoreProfile');
 
-exports.create = (req, res, ) => {
+exports.create = (req, res) => {
     const store = new StoreProfile({
         StoreType: req.body.StoreType,
         StoreName: req.body.StoreName,
         Phone: req.body.Phone,
         RestDate: req.body.RestDate,
+        MenuUrl: req.body.MenuUrl,
     });
     store
         .save()
@@ -14,6 +15,7 @@ exports.create = (req, res, ) => {
         })
         .catch((err) => {
             res.status(500).send({
+                status:1,
                 store:
                     err.store || "Some error occurred while creating the Store.",
             });
@@ -54,3 +56,18 @@ exports.findOne = (req, res) => {
             });
         });
 };
+
+exports.findType = (req, res) => {
+    StoreProfile.aggregate([
+        {
+            $match: {
+                "StoreType": {"$in": [[req.params.type]]}
+            }
+        }
+    ])
+    .exec((err, data)=>{
+        if(err) throw err;
+        console.log(data);
+        res.send(data);
+    })
+}

@@ -6,10 +6,11 @@ let StoreProfileSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MenuImageUpload'
     },
-    StoreType: {
-        type: String,
-        enum: ["Foods", "Drinks"]
-    },
+    StoreType: [{
+        type: Array,
+        enum: ["Foods", "Drinks"],
+        default: "Foods"
+    }],
     StoreName: {
         type: String,
         required: true,
@@ -21,13 +22,17 @@ let StoreProfileSchema = new mongoose.Schema({
     Phone: {
         type: String,
     },
-    RestDate: {
+    RestDate: [{
+        type: Array,
+        enum: ["Nan", "Mon", "Tue", "Wed", "Thu", "Fir", "Sat", "Sun"],
+        default: "Nan"
+    }],
+    MenuUrl: {
         type: String,
-        enum: ["Mon", "Tue", "Wed", "Thu", "Fir", "Sat", "Sun"]
     },
-    AverageScore: {
-        type: Number,
-    }
+    // AverageScore: {
+    //     type: Number,
+    // }
 });
 
 // Compile Schema 變成 Model，如此可以透過這個 Model 建立和儲存 document

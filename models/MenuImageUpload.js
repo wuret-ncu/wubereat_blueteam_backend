@@ -1,14 +1,12 @@
 const mongoose = require("mongoose");
 
 const MenuImageUploadSchema = new mongoose.Schema({
-    ImageName: {
-        type: String,
-        required: true,
-    },
-    UploadDate: {
-        type: Date,
+    image: {
+        type: Buffer,
         required: true,
     }
+}, {
+    timestamps: true
 });
 
 // Compile Schema 變成 Model，如此可以透過這個 Model 建立和儲存 document
