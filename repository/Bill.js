@@ -1,9 +1,9 @@
-var Bill = require('../models/Bill');
+const Bill = require('../models/Bill');
 
 exports.bill = async() => {
     const bills = await Bill.find.populate({
-        path: "shoppingcarts.ObjectId",
-        select: "UserName StoreName Meals Price"
+        path: "shoppingcart",
+        select: "StoreName"
     });
     return bills[0];
 };

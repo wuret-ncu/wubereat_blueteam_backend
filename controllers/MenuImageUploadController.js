@@ -3,18 +3,30 @@ var MenuImageUpload = require('../models/MenuImageUpload');
 const fs = require('fs');
 const path = require('path');
 
-exports.create = async(req, res, next) => {
-    const img = req.file
-    if (!img) {
-        const err = new Error('Please upload a file')
-        err.httpStatusCode = 400
-        return next(err)
+exports.create = async(req, res) => {
+    try {
+        let payload = {
+            image: req.file.path,
+            storeprofile: req.body.storeprofile
+        }
+        const image = await MenuImageUpload.create({
+            ...payload
+        });
+        res.status(200).json({
+            status: true,
+            data: image,
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            error: err,
+            status: false,
+        })
     }
-    res.send(img)
 };
 
 exports.findOne = (req, res) => {
-    const { filename } = req.params;
+    const { storeprofile,filename } = req.params;
     const dirname = path.resolve();
     const fullfilepath = path.join(dirname, 'images/' + filename);
     return res.sendFile(fullfilepath);

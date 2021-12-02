@@ -12,7 +12,6 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
 
-// app.use(express.static(__dirname,'public'));
 app.use('/images', express.static('images'));
 
 app.get('/', (req, res) => {

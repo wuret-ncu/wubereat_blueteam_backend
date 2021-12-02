@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
          cb(null, path.join("./images/"));
     },
     filename: (req, file, cb) => {
-        cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);    // 獲得檔案的原始名稱（名稱＋檔案格式）
+        cb(null, file.originalname);    // 獲得檔案的原始名稱（名稱＋檔案格式）
     }
 });
 

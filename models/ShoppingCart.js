@@ -12,14 +12,13 @@ let ShoppingCartSchema = new mongoose.Schema({
         required: true,
     }],
     bill: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Bill',
-        required: true,
+        type: Number,
+        default: 123
     }],
     Meals: [{
         type: Array,
         required: true,
-    },],
+    }],
     Price: {
         type: Number,
         default: 0,

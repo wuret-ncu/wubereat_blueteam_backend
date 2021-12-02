@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
-var ShoppingCart = require("../models/ShoppingCart")
 
 const BillSchema = new mongoose.Schema({
+    Id: {   
+        type: Number,
+        default: 123,
+    },
     shoppingcarts: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ShopingCart',

@@ -2,10 +2,11 @@ const mongoose = require('mongoose');
 var ShoppingCart = require('../models/ShoppingCart')
 
 exports.create = (req, res) => {
+    const billId = '123';
     const cart = new ShoppingCart({
         userprofiles: req.body.userprofiles,
         storeprofiles: req.body.storeprofiles,
-        bill: req.body.bill,
+        bill: billId,
         Meals: req.body.Meals,
         Price: req.body.Price,
     });
@@ -123,6 +124,22 @@ exports.findFavorite = (req, res) => {
         if(err) throw err;
         console.log(data);
         res.send(data)
+    })
+}
+
+exports.bill = (req, res) => {
+    // var billId = '123';
+    ShoppingCart.aggregate ([
+        {
+            $match: {
+                bill: { $gte: 123 }
+            }
+        }
+    ])
+    .exec ((err, data) => {
+        if (err) throw err;
+        console.log(data);
+        res.send(data);
     })
 }
 
