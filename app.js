@@ -6,11 +6,16 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 require("./config/mongoose")(app);
 
+var corseOptions = {
+    origin: "*",
+    credentials: true,
+};
+
 // Data parsing
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors(corseOptions));
 
 app.use('/images', express.static('images'));
 

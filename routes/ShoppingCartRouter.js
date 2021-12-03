@@ -5,6 +5,7 @@ module.exports = (app) => {
     app.get("/cart/:cartId", App.findOne);
     app.get("/users/:userId/favorite", App.findFavorite);
     app.get("/bills", App.bill);
+    // app.get("/", App.)
     app.delete("/:cartId", App.removeCart);
    
     // /user/<user_id>/favorite

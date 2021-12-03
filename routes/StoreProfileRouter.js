@@ -4,6 +4,6 @@ module.exports = (app) => {
   app.get("/stores", App.findAll);
   app.get("/store/:storeId", App.findOne);
   app.get("/stores/:type",App.findType);
-  // app.put("/store/:storeId", App.update);
-  // app.delete("/store/:storeId", App.delete);
+  app.post("/store/:storeId", App.update);
+  app.delete("/store/:storeId", App.delete);
 };

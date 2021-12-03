@@ -7,7 +7,7 @@ exports.create = async(req, res) => {
     try {
         let payload = {
             image: req.file.path,
-            storeprofile: req.body.storeprofile
+            storeId: req.body.storeId
         }
         const image = await MenuImageUpload.create({
             ...payload
@@ -26,7 +26,7 @@ exports.create = async(req, res) => {
 };
 
 exports.findOne = (req, res) => {
-    const { storeprofile,filename } = req.params;
+    const { storeId,filename } = req.params;
     const dirname = path.resolve();
     const fullfilepath = path.join(dirname, 'images/' + filename);
     return res.sendFile(fullfilepath);
