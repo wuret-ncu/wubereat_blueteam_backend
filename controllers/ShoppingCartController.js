@@ -2,10 +2,11 @@ const mongoose = require('mongoose');
 var ShoppingCart = require('../models/ShoppingCart')
 
 exports.create = (req, res) => {
+    const billId = '123';
     const cart = new ShoppingCart({
         userprofiles: req.body.userprofiles,
         storeprofiles: req.body.storeprofiles,
-        bill: req.body.bill,
+        bill: billId,
         Meals: req.body.Meals,
         Price: req.body.Price,
     });
@@ -117,6 +118,53 @@ exports.findFavorite = (req, res) => {
                 },
                 Frequency: 1
             }
+        }
+    ])
+    .exec((err, data)=>{
+        if(err) throw err;
+        console.log(data);
+        res.send(data)
+    })
+}
+
+exports.bill = (req, res) => {
+    ShoppingCart.aggregate([
+        {
+            $group: {
+                _id: {
+                  "$toDate": {
+                    "$subtract": [
+                      { "$toLong": { "$toDate": "$_id" }  },
+                      { "$mod": [ { "$toLong": { "$toDate": "$_id" } }, 1000 * 60 * 15 ] }  // group result by 15 mins time interval in the shoppingcart.
+                    ]
+                  }
+                },
+                count: { "$sum": 1 },
+                Total: {
+                    $sum: "$Price"
+                },
+                Meals: {
+                    $push: "$Meals"
+                },
+                Price: {
+                    $push: "$Price"
+                }
+              }
+        },
+        {
+            $project: {
+                _id: 0,
+                Meals: 1,
+                Price: 1,
+                Total: 1,
+                FormattedDate: { $dateToString: { format: "%Y-%m-%d %H:%M", date: "$_id" } } 
+            }
+        },
+        {
+            $sort: { FormattedDate: -1 }    // 使用日期遞減的方式排列（時間點離目前時間越近的越前面）
+        },
+        {
+            $limit: 1   // 只取出第一筆
         }
     ])
     .exec((err, data)=>{

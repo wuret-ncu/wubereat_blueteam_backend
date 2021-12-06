@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
          cb(null, path.join("./images/"));
     },
     filename: (req, file, cb) => {
-        cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);    // 獲得檔案的原始名稱（名稱＋檔案格式）
+        cb(null, file.originalname);    // 獲得檔案的原始名稱（名稱＋檔案格式）
     }
 });
 
@@ -24,7 +24,7 @@ const fileFilter = (req, file, cb) => {
 exports.upload = multer({
     storage: storage,
     limits: {
-        fileSize: 1024 * 1024 * 6
+        fileSize: 10485760 //10 MB
     },
     fileFilter: fileFilter
 });

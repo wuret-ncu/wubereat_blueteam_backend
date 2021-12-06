@@ -1,8 +1,13 @@
 const mongoose = require("mongoose");
 
 const MenuImageUploadSchema = new mongoose.Schema({
-    image: {
-        type: Buffer,
+    storeId: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'StoreProfile',
+        required: true,
+    }],
+    image: { 
+        type: String,
         required: true,
     }
 }, {

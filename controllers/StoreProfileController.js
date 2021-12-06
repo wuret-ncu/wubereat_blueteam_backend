@@ -1,3 +1,4 @@
+const e = require('express');
 var StoreProfile = require('../models/StoreProfile');
 
 exports.create = (req, res) => {
@@ -71,3 +72,28 @@ exports.findType = (req, res) => {
         res.send(data);
     })
 }
+
+exports.update = (req, res) => {
+    StoreProfile.findByIdAndUpdate((req.params.storeId),
+    { StoreType: req.body.StoreType, Phone: req.body.Phone, RestDate: req.body.RestDate, MenuUrl: req.body.MenuUrl }, 
+    function(err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(data);
+            console.log("Store Profile Updated!");
+        }
+    });
+};
+
+exports.delete = (req, res) => {
+    StoreProfile.findByIdAndDelete((req.params.storeId),
+        function(err, data) {
+            if (err) {
+                console.log(err);
+            } else {
+                res.send(data);
+                console.log("Store Deleted!");
+            }
+        });
+};
