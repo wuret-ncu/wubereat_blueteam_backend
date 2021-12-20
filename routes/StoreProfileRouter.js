@@ -1,6 +1,7 @@
 module.exports = (app) => {
   const App = require("../controllers/StoreProfileController");
-  app.post("/stores", App.create);
+  const multerInstance = require("../config/multer");
+  app.post("/stores", multerInstance.upload.single('Image'), App.create);
   app.get("/stores", App.findAll);
   app.get("/store/:storeId", App.findOne);
   app.get("/stores/:type",App.findType);

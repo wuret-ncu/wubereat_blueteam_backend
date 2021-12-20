@@ -1,20 +1,16 @@
 const mongoose = require("mongoose");
 
 let ShoppingCartSchema = new mongoose.Schema({
-    userprofiles: [{
+    userprofiles: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserProfile',
         required: true,
-    }],
-    storeprofiles: [{
+    },
+    storeprofiles: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'StoreProfile',
         required: true,
-    }],
-    bill: [{
-        type: Number,
-        default: 123
-    }],
+    },
     Meals: [{
         type: Array,
         required: true,
