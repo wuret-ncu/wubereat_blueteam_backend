@@ -5,6 +5,9 @@ const path = require('path');
 
 exports.create = async(req, res) => {
     try {
+        // const obj = JSON.parse(JSON.stringify(req.body));
+        // console.log(obj);
+        // console.log(req.file)
         let payload = {
             image: req.file.path,
             storeId: req.body.storeId
@@ -12,6 +15,9 @@ exports.create = async(req, res) => {
         const image = await MenuImageUpload.create({
             ...payload
         });
+        // console.log(req.file);
+        // console.log(req);
+        // console.log(req);
         res.status(200).json({
             status: true,
             data: image,

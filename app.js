@@ -1,6 +1,8 @@
 const express = require('express');
+// const expressBusboy = require('express-busboy');
 
 const app = express();
+// expressBusboy.extend(app);
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -12,8 +14,8 @@ var corseOptions = {
 };
 
 // Data parsing
-app.use(bodyParser.urlencoded({ extended: true })); 
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true })); 
+app.use(bodyParser.json({limit: "50mb"}));
 app.use(cookieParser());
 app.use(cors(corseOptions));
 
@@ -25,8 +27,8 @@ app.get('/', (req, res) => {
 require("./routes/UserProfileRouter")(app);
 require("./routes/StoreProfileRouter")(app);
 require("./routes/ShoppingCartRouter")(app);
-require("./routes/MenuImageUploadRouter")(app);
-require("./routes/BillRouter")(app);
+// require("./routes/MenuImageUploadRouter")(app);
+// require("./routes/BillRouter")(app);
 
 // Set port, Listen on server
 const PORT = process.env.PORT || 8080;

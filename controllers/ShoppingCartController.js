@@ -2,13 +2,11 @@ const mongoose = require('mongoose');
 var ShoppingCart = require('../models/ShoppingCart')
 
 exports.create = (req, res) => {
-    const billId = '123';
     const cart = new ShoppingCart({
         userprofiles: req.body.userprofiles,
         storeprofiles: req.body.storeprofiles,
-        bill: billId,
         Meals: req.body.Meals,
-        Price: req.body.Price,
+        Price: req.body.Price
     });
             
     cart
@@ -25,9 +23,9 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-    let userId = '617b866fb32fcc5a5855e95c';
+    let userId = '619620dc6c4cfe95552f26c7';
     // let userId = req.cookies.userId;
-    ShoppingCart.find({userId})
+    ShoppingCart.find({userId}).sort('-createdAt').populate({path:'storeprofiles userprofiles',select: 'StoreName UserName -_id'}).exec()
         .then((data) => {
             res.send(data);
         })
@@ -127,51 +125,100 @@ exports.findFavorite = (req, res) => {
     })
 }
 
-exports.bill = (req, res) => {
-    ShoppingCart.aggregate([
-        {
-            $group: {
-                _id: {
-                  "$toDate": {
-                    "$subtract": [
-                      { "$toLong": { "$toDate": "$_id" }  },
-                      { "$mod": [ { "$toLong": { "$toDate": "$_id" } }, 1000 * 60 * 15 ] }  // group result by 15 mins time interval in the shoppingcart.
-                    ]
-                  }
-                },
-                count: { "$sum": 1 },
-                Total: {
-                    $sum: "$Price"
-                },
-                Meals: {
-                    $push: "$Meals"
-                },
-                Price: {
-                    $push: "$Price"
-                }
-              }
-        },
-        {
-            $project: {
-                _id: 0,
-                Meals: 1,
-                Price: 1,
-                Total: 1,
-                FormattedDate: { $dateToString: { format: "%Y-%m-%d %H:%M", date: "$_id" } } 
-            }
-        },
-        {
-            $sort: { FormattedDate: -1 }    // 使用日期遞減的方式排列（時間點離目前時間越近的越前面）
-        },
-        {
-            $limit: 1   // 只取出第一筆
-        }
-    ])
-    .exec((err, data)=>{
-        if(err) throw err;
-        console.log(data);
-        res.send(data)
-    })
+exports.bill = async (req, res) => {
+    let currentDate = new Date();
+    currentDate.setHours(currentDate.getHours()-1);
+    ShoppingCart.find({ createdAt: { $gte: currentDate } }).sort('-createdAt').populate({path:'storeprofiles userprofiles',select: 'StoreName UserName -_id'}).exec()
+        .then((data) => {
+            res.send(data);
+        })
+        .catch((err) => {
+            res.status(500).send({
+                cart:
+                    err.cart || "Some error occurred while retrieving carts.",
+            });
+        });
+
+    // let foundCart = await ShoppingCart.find({}).populate("bill");
+    // res.json(foundCart);
+    // ShoppingCart.aggregate([
+    //     {
+    //         $group: {
+                // _id: {
+                    // _id: "$storeprofiles",
+                    // storeprofiles: {"$first": "$storeprofiles"},
+                //   "$toDate": {
+                //     "$subtract": [
+                //       { "$toLong": { "$toDate": "$_id" }  },
+                //       { "$mod": [ { "$toLong": { "$toDate": "$_id" } }, 1000 * 60 * 15 ] }  // group result by 15 mins time interval in the shoppingcart.
+                //     ]
+                //   }
+                // },
+                // storeprofiles: { 
+                //     // $push: { "$first": "$storeprofiles" }
+
+                // },
+                // userprofiles: { 
+                //     $push: { "$first": "$userprofiles" }
+                // },
+                // count: { "$sum": 1 },
+                // Total: {
+                //     $sum: "$Price"
+                // },
+                // Meals: {
+                //     $push: "$Meals"
+                // },
+                // Price: {
+                //     $push: "$Price"
+                // }
+            //   }
+        // },
+        // {
+        //     $lookup: {
+        //         from: "userprofiles",
+        //         localField:"userprofiles",
+        //         foreignField:"_id",
+        //         as: "User_info"
+        //     }
+        // },
+        // {
+        //     $lookup: {
+        //         from: "storeprofiles",
+        //         localField:"storeprofiles",
+        //         foreignField:"_id",
+        //         as: "Store_info"
+        //     }
+        // },
+        // {
+        //     $project: {
+        //         _id: 0,
+        //         Store_info: {
+        //             StoreName: 1
+        //         },
+        //         User_info: {
+        //             UserName: 1
+        //         },
+        //         Meals: 1,
+        //         Price: 1,
+        //         Total: 1,
+        //         FormattedDate: { $dateToString: { format: "%Y-%m-%d %H:%M", date: "$_id" } } 
+        //     }
+        // },
+        // {
+        //     "$unwind": "$Store_info"
+        // },
+        // {
+        //     $sort: { FormattedDate: -1 }    // 使用日期遞減的方式排列（時間點離目前時間越近的越前面）
+        // },
+        // {
+        //     $limit: 1   // 只取出第一筆
+        // }
+    // ])
+    // .exec((err, data)=>{
+    //     if(err) throw err;
+    //     console.log(data);
+    //     res.send(data)
+    // })
 }
 
 exports.removeCart = async (req, res) => {
