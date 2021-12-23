@@ -11,14 +11,15 @@ let ShoppingCartSchema = new mongoose.Schema({
         ref: 'StoreProfile',
         required: true,
     },
-    Meals: [{
-        type: Array,
+    Meals: {
+        type: String,
         required: true,
-    }],
+    },
     Price: {
         type: Number,
         default: 0,
     }
+    
 }, {
     timestamps: true
 });
