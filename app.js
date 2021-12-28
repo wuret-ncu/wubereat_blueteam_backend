@@ -1,5 +1,4 @@
 const express = require('express');
-// const expressBusboy = require('express-busboy');
 
 const app = express();
 // expressBusboy.extend(app);
@@ -12,12 +11,12 @@ var corseOptions = {
     origin: "*",
     credentials: true,
 };
+app.use(cors(corseOptions));
 
 // Data parsing
 app.use(express.urlencoded({ extended: true })); 
 app.use(bodyParser.json({limit: "50mb"}));
 app.use(cookieParser());
-app.use(cors(corseOptions));
 
 app.use('/images', express.static('images'));
 
@@ -27,9 +26,7 @@ app.get('/', (req, res) => {
 require("./routes/UserProfileRouter")(app);
 require("./routes/StoreProfileRouter")(app);
 require("./routes/ShoppingCartRouter")(app);
-// require("./routes/MenuImageUploadRouter")(app);
-// require("./routes/BillRouter")(app);
 
 // Set port, Listen on server
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, console.log(`Server is starting at ${PORT}`));
+app.listen(PORT, console.log(`Server is running at ${PORT}`));

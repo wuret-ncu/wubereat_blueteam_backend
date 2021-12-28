@@ -1,7 +1,10 @@
-const mongoose = require('mongoose');
 var UserProfile = require('../models/UserProfile');
+// Import module into the application
+const crypto = require('crypto')
+// Creating salt for all users
+let salt = 'f844b09ff50c'
 
-exports.create = (req, res) => {
+exports.register = (req, res) => {
 
   // 確認沒有漏填欄位
   const noEmptyData =
@@ -28,29 +31,73 @@ exports.create = (req, res) => {
   }
 
   // 資料無誤，將使用者填寫的內容存成物件
-  const user = new UserProfile({
+  const userdata = {
     UserName: req.body.UserName,
     Password: req.body.Password,
     ConfirmPassword: req.body.ConfirmPassword,
-  });
+  }
 
-  user
-      .save()
-      .then((data) => {
-        res.send(data);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send({
-          status: 3,
-          // user:
-          //     err.user || "Can't catch user's data while creating the User.",
-          err: err
-          
-        });
-      });
-      
+  UserProfile.findOne({
+    // ensure username is unique, i.e the username is not already in the database
+    UserName: req.body.UserName
+  })
+    .then(user => {
+      // if the username is unique 
+      if (!user) {
+        let hash = crypto.pbkdf2Sync(userdata.Password, salt,  
+        1000, 64, `sha512`).toString(`hex`);
+        userdata.Password = hash
+        // if the username is unique go ahead and create userData after hashing password and salt
+          UserProfile.create(userdata)
+            .then(user => {
+              // after successfully creating userData display registered message
+              res.redirect("/login")
+            })
+            .catch(err => {
+              // if an error occured while trying to create userData, go ahead and display the error
+              res.send('error:' + err)
+            })
+      } else {
+        // if the username is not unique, display that username is already registered with an account
+        res.json({ error: 'The username ' + req.body.UserName + ' is registered with an account' })
+      }
+    })
+    .catch(err => {
+      // display error if an error occured
+      res.send('error:' + err)
+    });      
 };
+
+exports.login = (req, res) => {
+
+  UserProfile.findOne({
+    // check to see if a username and password match like this is in the database
+    UserName: req.body.UserName,
+    Password: crypto.pbkdf2Sync(req.body.Password, salt,  
+      1000, 64, `sha512`).toString(`hex`)
+  })
+    .then(user => {
+      // if the username and password match exist in database then the user exists
+      if (user) {
+        const payload = {
+          UserName: user.UserName,  
+          Password: user.Password 
+        }
+        // after successful login display token and payload data
+        // res.redirect("/stores");
+        console.log("login")
+        res.send("login successful~")
+      } else {
+        // if user cannot be found, display the message below
+        res.json({ error: 'user not found' })
+      }
+    })
+    // catch and display any error that occurs while trying to login user
+    .catch(err => {
+      res.send('error:' + err)
+    })
+
+}
 
 exports.findOne = (req, res) => {
   UserProfile.findById(req.params.userId)

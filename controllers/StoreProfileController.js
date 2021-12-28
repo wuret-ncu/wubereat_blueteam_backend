@@ -63,19 +63,25 @@ exports.findAll = (req, res) => {
 };
 
 exports.findOne = async (req, res) => {
-    try {
-        let storeId = req.params.storeId
-        let storeDetails = await StoreProfile.findById(storeId);
-        res.status(200).json({
-            status: true,
-            data: storeDetails,
-        })
-    } catch (err) {
-        res.status(500).json({
-            status: false,
-            error: err
-        })
-    }
+    const { storeId,filename } = req.params;
+    const dirname = path.resolve();
+    const data = StoreProfile.findById(storeId);
+    const fullfilepath = path.join(dirname, 'images/' + filename);
+    console.log(data)
+    return res.sendFile(fullfilepath);
+    // try {
+    //     let storeId = req.params.storeId
+    //     let storeDetails = await StoreProfile.findById(storeId);
+    //     res.status(200).json({
+    //         status: true,
+    //         data: storeDetails,
+    //     })
+    // } catch (err) {
+    //     res.status(500).json({
+    //         status: false,
+    //         error: err
+    //     })
+    // }
     // StoreProfile.findById(req.params.storeId)
     //     .then((data) => {
     //         if(!data) {
