@@ -22,8 +22,79 @@ exports.create = async (req, res) => {
             });
         });
 };
-// .sort('-createdAt').populate({path:'storeprofiles userprofiles',select: 'StoreName UserName -_id'}).exec()
-exports.findAll = (req, res) => {
+
+exports.drawer = (req, res) => {
+    let currentDate = new Date();   // 取得現在的日期＆時間
+    currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
+    var userId = mongoose.Types.ObjectId(req.params.userId)
+    ShoppingCart.aggregate([
+        // ↓ 顯示該用戶的點餐歷史紀錄 ↓ //
+        {   
+            $match: {
+                userprofiles: { "$in":  [userId] }
+            }
+        },
+        {
+            $match: {
+                createdAt: { $gte: currentDate }
+            }
+        },
+        {
+            $group: {
+                _id: "",
+                Order: { $push: "$$ROOT"},
+            }
+        },
+        {
+            $unwind: "$Order"
+        },
+        {
+            $lookup: {
+                from: "storeprofiles",
+                localField:"Order.storeprofiles",
+                foreignField:"_id",
+                as: "Store_info"
+            }
+        },
+        {
+            $unwind: "$Store_info"
+        },
+        {
+            $group: {
+                _id: '',
+                List: {
+                    $push: {
+                        Store: "$Store_info",
+                        Order: "$Order",
+                    }
+                },
+                Total: { $sum: "$Order.Price"},
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                List: {
+                    Order: {
+                        Meals: 1,
+                        Price: 1
+                    },
+                    Store: {
+                        StoreName: 1
+                    }
+                },
+                Total: 1
+            }
+        },
+    ])
+    .exec((err, data)=>{
+        if(err) throw err;
+        console.log(data);
+        res.send(data)
+    })
+};
+
+exports.history = (req, res) => {
     var userId = mongoose.Types.ObjectId(req.params.userId)
     ShoppingCart.aggregate([
         // ↓ 顯示該用戶的點餐歷史紀錄 ↓ //
