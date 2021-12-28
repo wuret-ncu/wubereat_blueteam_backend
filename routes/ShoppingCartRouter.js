@@ -1,7 +1,7 @@
 module.exports = (app) => {
     const App = require("../controllers/ShoppingCartController");
     app.post("/carts", App.create);
-    app.get("/carts/drawer/:userId", App.drawer);
+    app.get("/carts/drawer", App.drawer);
     app.get("/carts/history/:userId", App.history);
     app.get("/cart/:cartId", App.findOne);
     app.get("/users/:userId/favorite", App.findFavorite);

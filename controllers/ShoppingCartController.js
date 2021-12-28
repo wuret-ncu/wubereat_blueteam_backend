@@ -26,7 +26,7 @@ exports.create = async (req, res) => {
 exports.drawer = (req, res) => {
     let currentDate = new Date();   // 取得現在的日期＆時間
     currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
-    var userId = mongoose.Types.ObjectId(req.params.userId)
+    var userId = mongoose.Types.ObjectId('617b866fb32fcc5a5855e95c')
     ShoppingCart.aggregate([
         // ↓ 顯示該用戶的點餐歷史紀錄 ↓ //
         {   
