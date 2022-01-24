@@ -9,6 +9,7 @@ exports.register = (req, res) => {
   // 確認沒有漏填欄位
   const noEmptyData =
     req.body.UserName &&
+    req.body.NickName &&
     req.body.Password &&
     req.body.ConfirmPassword;
   console.log(noEmptyData);
@@ -33,6 +34,7 @@ exports.register = (req, res) => {
   // 資料無誤，將使用者填寫的內容存成物件
   const userdata = {
     UserName: req.body.UserName,
+    NickName: req.body.NickName,
     Password: req.body.Password,
     ConfirmPassword: req.body.ConfirmPassword,
   }
@@ -72,7 +74,7 @@ exports.login = (req, res) => {
 
   UserProfile.findOne({
     // check to see if a username and password match like this is in the database
-    UserName: req.body.UserName,
+    NickName: req.body.NickName,
     Password: crypto.pbkdf2Sync(req.body.Password, salt,  
       1000, 64, `sha512`).toString(`hex`)
   })
@@ -80,7 +82,7 @@ exports.login = (req, res) => {
       // if the username and password match exist in database then the user exists
       if (user) {
         const payload = {
-          UserName: user.UserName,  
+          NickName: user.NickName,  
           Password: user.Password 
         }
         // after successful login display token and payload data
