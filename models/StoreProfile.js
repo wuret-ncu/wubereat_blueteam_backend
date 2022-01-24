@@ -30,8 +30,8 @@ let StoreProfileSchema = new mongoose.Schema({
     MenuUrl: {
         type: String,
     },
-    Image: {
-        type: String,
+    image: {
+        type: String
     }
     // AverageScore: {
     //     type: Number,
