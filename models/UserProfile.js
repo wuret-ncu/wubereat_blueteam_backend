@@ -5,6 +5,10 @@ const UserProfileSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    NickName: {
+        type: String,
+        required: true,
+    },
     Password: {
         type: String,
         required: true,
