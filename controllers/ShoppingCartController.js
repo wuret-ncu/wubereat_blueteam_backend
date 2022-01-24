@@ -89,8 +89,8 @@ exports.drawer = (req, res) => {
     ])
     .exec((err, data)=>{
         if(err) throw err;
-        console.log(data);
-        res.send(data)
+        console.log(data[0]);
+        res.send(data[0])
     })
 };
 

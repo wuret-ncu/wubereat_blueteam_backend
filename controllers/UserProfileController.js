@@ -87,7 +87,8 @@ exports.login = (req, res) => {
         // res.redirect("/stores");
         console.log("login")
         res.send("login successful~")
-      } else {
+      } 
+      else {
         // if user cannot be found, display the message below
         res.json({ error: 'user not found' })
       }
@@ -119,4 +120,9 @@ exports.findOne = (req, res) => {
           store: "Store not found with id" + req.params.storeId,
       });
     });
+}
+
+exports.logout = (req, res) => {
+  req.logout()
+  res.redirect('/login')
 }
