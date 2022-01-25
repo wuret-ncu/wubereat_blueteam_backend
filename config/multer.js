@@ -1,11 +1,10 @@
 const multer = require("multer");
-const path = require("path");
 
 
 //image upload
 const storage = multer.diskStorage({
     destination: (req, res, cb) => {
-         cb(null, "images");
+         cb(null, "images/");
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname);    // 獲得檔案的原始名稱（名稱＋檔案格式）

@@ -1,54 +1,52 @@
 const e = require('express');
 var StoreProfile = require('../models/StoreProfile');
 const multer = require('multer');
-const path = require('path');
 const fs = require('fs');
 
 exports.create = async (req, res) => {
-    // try {
-    //     let payload = {
-    //         StoreType: req.body.StoreType,
-    //         StoreName: req.body.StoreName,
-    //         Phone: req.body.Phone,
-    //         RestDate: req.body.RestDate,
-    //         MenuUrl: req.body.MenuUrl,
-    //         Image: req.file.path,
-    //     }
-    //     const image = await StoreProfile.create({
-    //         ...payload
-    //     });
-    //     res.status(200).json({
-    //         status: true,
-    //         data: image,
-    //     })
-    // } catch (err) {
-    //     console.log(err)
-    //     res.status(500).json({
-    //         error: err,
-    //         status: false,
-    //     })
-    // }
-    const dirname = path.resolve();
-    const store = new StoreProfile({
-        StoreType: req.body.StoreType,
-        StoreName: req.body.StoreName,
-        Phone: req.body.Phone,
-        RestDate: req.body.RestDate,
-        MenuUrl: req.body.MenuUrl,
-        image: req.file.path,
-    });
-    store
-        .save()
-        .then((data) => {
-            res.send(data);
-        })
-        .catch((err) => {
-            res.status(500).send({
-                status:1,
-                store:
-                    err.store || "Some error occurred while creating the Store.",
-            });
+    try {
+        let payload = {
+            StoreType: req.body.StoreType,
+            StoreName: req.body.StoreName,
+            Phone: req.body.Phone,
+            RestDate: req.body.RestDate,
+            MenuUrl: req.body.MenuUrl,
+            image: req.file.filename,
+        }
+        const image = await StoreProfile.create({
+            ...payload
         });
+        res.status(200).json({
+            status: true,
+            data: image,
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({
+            error: err,
+            status: false,
+        })
+    }
+    // const store = new StoreProfile({
+    //     StoreType: req.body.StoreType,
+    //     StoreName: req.body.StoreName,
+    //     Phone: req.body.Phone,
+    //     RestDate: req.body.RestDate,
+    //     MenuUrl: req.body.MenuUrl,
+    //     image: req.file.buffer,
+    // });
+    // store
+    //     .save()
+    //     .then((data) => {
+    //         res.send(data);
+    //     })
+    //     .catch((err) => {
+    //         res.status(500).send({
+    //             status:1,
+    //             store:
+    //                 err.store || "Some error occurred while creating the Store.",
+    //         });
+    //     });
 };
 
 exports.findAll = (req, res) => {
@@ -65,14 +63,56 @@ exports.findAll = (req, res) => {
 };
 
 exports.findOne = async (req, res) => {
+    var storeId = req.params.storeId
+	StoreProfile.findById(storeId).then((result) => {
+		res.render('menu', {StoreType : result.StoreType, StoreName : result.StoreName, Phone : result.Phone, RestDate : result.RestDate, MenuUrl : result.MenuUrl, image : result.image});
+	}).catch((e) =>  res.send(e) );
+    // let thing = new StoreProfile({ storeId: req.params.storeId });
+    // const dirname = path.resolve();
+    // const fullfilepath = path.join(dirname, 'images/' + req.file.filename);
+    
+    // req.body.thing = JSON.parse(req.body.thing);
+    // thing = {
+    //     storeId: req.params.storeId,
+    //     StoreType: req.body.thing.StoreType,
+    //     StoreName: req.body.thing.StoreName,
+    //     Phone: req.body.thing.Phone,
+    //     RestDate: req.body.thing.RestDate,
+    //     MenuUrl: req.body.thing.MenuUrl,
+    //     image: fullfilepath,
+    // };
+    // StoreProfile.findOne({storeId: req.params.storeId}, thing).then(
+    //     () => {
+    //       res.status(201).json({
+    //         message: 'Store information show successfully!'
+    //       });
+    //     }
+    //   ).catch(
+    //     (error) => {
+    //       res.status(400).json({
+    //         error: error
+    //       });
+    //     }
+    //   );
+    // StoreProfile.findById(req.params.storeId)
+    // console.log(res.file.path)
+    // const dirname = path.resolve();
+    // const fullfilepath = path.join(dirname, res.file.path);
+    // return res.sendFile(fullfilepath);
     // const store = await StoreProfile.findByIdAndUpdate(req.params.storeId, req.body = { image: "http://localhost:8080/" }, {new: true});
-    StoreProfile.findById(req.params.storeId, {
-        image: {
-            data: fs.readFileSync(`images/${req.file.originalname}`), contentType: 'foo'
-        }
-    }, {safe: true, new: true})
-        .exec()
-
+    // try{
+    //     const store = await StoreProfile.findById(req.params.storeId);
+    //     res.setHeader('Content-Type', 'application/json');
+    //     res.send(JSON.stringify({
+    //         image: Buffer.from(image)
+    //     }));
+    // }
+    // catch(err) {
+    //     res.status(404).json({
+    //         status: false,
+    //         error: err
+    //     })
+    // }
     // try {
     //     const store = await StoreProfile.findById(req.params.storeId)
     //     // res.set('Content-Type', 'image/jpg')
