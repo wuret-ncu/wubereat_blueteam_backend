@@ -72,7 +72,16 @@ exports.register = (req, res) => {
 };
 
 exports.getregister = (req, res) => {
-  res.render('register')
+  UserProfile.find()
+        .then((data) => {
+            res.send(data);
+        })
+        .catch((err) => {
+            res.status(500).send({
+                store:
+                    err.store || "Some error occurred while retrieving users.",
+            });
+        });
 }
 
 exports.login = (req, res) => {
