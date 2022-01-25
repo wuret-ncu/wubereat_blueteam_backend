@@ -40,7 +40,7 @@ exports.register = (req, res) => {
   }
 
   UserProfile.findOne({
-    // ensure username is unique, i.e the username is not already in the database
+    // ensure username and nickname are unique, i.e the username and nickname are not already in the database
     UserName: req.body.UserName
   })
     .then(user => {
@@ -49,20 +49,33 @@ exports.register = (req, res) => {
         let hash = crypto.pbkdf2Sync(userdata.Password, salt,  
         1000, 64, `sha512`).toString(`hex`);
         userdata.Password = hash
-        // if the username is unique go ahead and create userData after hashing password and salt
-          UserProfile.create(userdata)
+        UserProfile.findOne({NickName: userdata.NickName}, function(err, data) {
+          if(!data) {
+              // if the username and nickname are unique go ahead and create userData after hashing password and salt
+            UserProfile.create(userdata) 
             .then(() => {
               // after successfully creating userData display registered message
               res.redirect("/login")
             })
             .catch(err => {
               // if an error occured while trying to create userData, go ahead and display the error
-              console.log('The username is registered with an account.')
               res.send('error:' + err)
             })
+          } else {
+            // if the username and nickname are not unique, display that username is already registered with an account
+            res.status(400).send({
+              status: 3,
+              user: 'That nick name already exisits!'
+            });
+          }
+        })
+        
       } else {
-        // if the username is not unique, display that username is already registered with an account
-        res.json({ error: 'The username ' + req.body.UserName + ' is registered with an account' })
+        // if the username and nickname are not unique, display that username is already registered with an account
+        res.status(400).send({
+          status: 4,
+          user: 'That user name already exisits!'
+        });
       }
     })
     .catch(err => {
@@ -89,24 +102,36 @@ exports.login = (req, res) => {
   UserProfile.findOne({
     // check to see if a username and password match like this is in the database
     NickName: req.body.NickName,
-    Password: crypto.pbkdf2Sync(req.body.Password, salt,  
-      1000, 64, `sha512`).toString(`hex`)
+    // Password: crypto.pbkdf2Sync(req.body.Password, salt,  
+    //   1000, 64, `sha512`).toString(`hex`)
   })
     .then(user => {
       // if the username and password match exist in database then the user exists
       if (user) {
-        const payload = {
-          NickName: user.NickName,  
-          Password: user.Password 
+        if(user.Password == crypto.pbkdf2Sync(req.body.Password, salt,  
+          1000, 64, `sha512`).toString(`hex`)) {
+            const payload = {
+            NickName: user.NickName,  
+            Password: user.Password 
+          }
+          // after successful login display token and payload data
+          // res.redirect("/stores");
+          console.log("login")
+          res.send("login successful~")
         }
-        // after successful login display token and payload data
-        // res.redirect("/stores");
-        console.log("login")
-        res.send("login successful~")
+        else {
+          res.status(400).send({
+            status: 5,
+            user:"Wrong password!"
+          });
+        }
       } 
       else {
         // if user cannot be found, display the message below
-        res.json({ error: 'user not found' })
+        res.status(400).send({
+          status: 6,
+          user:"This nick name is not regestered!"
+        });
       }
     })
     // catch and display any error that occurs while trying to login user
