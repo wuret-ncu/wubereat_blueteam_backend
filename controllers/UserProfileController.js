@@ -51,12 +51,13 @@ exports.register = (req, res) => {
         userdata.Password = hash
         // if the username is unique go ahead and create userData after hashing password and salt
           UserProfile.create(userdata)
-            .then(user => {
+            .then(() => {
               // after successfully creating userData display registered message
               res.redirect("/login")
             })
             .catch(err => {
               // if an error occured while trying to create userData, go ahead and display the error
+              console.log('The username is registered with an account.')
               res.send('error:' + err)
             })
       } else {
@@ -69,6 +70,10 @@ exports.register = (req, res) => {
       res.send('error:' + err)
     });      
 };
+
+exports.getregister = (req, res) => {
+  res.render('register')
+}
 
 exports.login = (req, res) => {
 
@@ -100,6 +105,10 @@ exports.login = (req, res) => {
       res.send('error:' + err)
     })
 
+}
+
+exports.getlogin = (req, res) => {
+  res.render('login')
 }
 
 exports.findOne = (req, res) => {
