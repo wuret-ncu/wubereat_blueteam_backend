@@ -1,11 +1,16 @@
+<!DOCTYPE html>
 <html>
-<head>
-	<title>Image</title>
-</head>
-<body>
-    <div>
-        <img src="data:image/image/png;base64,
-          <%=user.avatar.toString('base64')%>" width='1080px'>
-    <div>
-</body>
+  <head>
+    <title>image</title>
+  </head>
+  <body>
+    <form id="uploadForm" enctype="multipart/form-data" method="get">
+        <h2> <%= StoreType %> </h2>
+        <h2> <%= StoreName %> </h2>
+        <h2> <%= Phone %> </h2>
+        <h2> <%= RestDate %> </h2>
+        <h2> <%= MenuUrl %> </h2>
+        <img src="/images/<%= image %>" />
+    </form>
+  </body>
 </html>

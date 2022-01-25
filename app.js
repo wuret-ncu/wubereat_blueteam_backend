@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const path = require("path");
 
 const session = require('express-session');
 app.use(session({
@@ -24,6 +25,8 @@ var corseOptions = {
 };
 app.use(cors(corseOptions));
 
+app.use(express.json({ limit: "1mb" }));
+
 // Data parsing
 app.use(express.urlencoded({ 
     limit: '50mb',
@@ -33,8 +36,14 @@ app.use(express.urlencoded({
 app.use(bodyParser.json({limit: "50mb"}));
 app.use(cookieParser());
 
-app.use('/images', express.static('images'));
+
+app.set("views", path.resolve(__dirname, "views"));
+app.set("images", path.resolve(__dirname, "images"));
+
 app.set("view engine", "ejs");
+app.use('/images', express.static('images'));
+
+// app.set('images', path.join(__dirname, 'images' ))
 
 app.get('/', (req, res) => {
     res.json({ message: "Server is running 😉"});
