@@ -3,7 +3,9 @@
 
 module.exports = (app) => {
     const App = require("../controllers/UserProfileController");
+    app.get("/register", App.getregister);
     app.post("/register", App.register);
+    app.get("/login", App.getlogin);
     // 加入 middleware，驗證 request 登入狀態
     app.post("/login", App.login
     // , 
