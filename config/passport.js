@@ -10,14 +10,14 @@ module.exports = app => {
 
   // 設定本地登入策略
   // 透過done參數，把驗證的結果顯示出來
-  passport.use(new LocalStrategy({ usernameField: 'UserName' }, (UserName, Password, done) => {
-    UserProfile.findOne({ UserName })
+  passport.use(new LocalStrategy({ usernameField: 'NickName' }, (NickName, Password, done) => {
+    UserProfile.findOne({ NickName })
       .then(user => {
         if (!user) {
-          return done(null, false, { message: 'That username is not registered!' })
+          return done(null, false, { message: 'That nick name is not registered!' })
         }
         if (user.Password !== Password) {
-          return done(null, false, { message: 'Username or Password incorrect.' })
+          return done(null, false, { message: 'Nick name or Password incorrect.' })
         }
         return done(null, user)
       })

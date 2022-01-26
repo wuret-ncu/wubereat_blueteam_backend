@@ -6,7 +6,7 @@ module.exports = app => {
     mongoose
     .connect(uri, { 
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
     .then(client => {
       console.log("Connected to the database!");
@@ -16,7 +16,3 @@ module.exports = app => {
       process.exit();
     })
 }
-
-// mongoose.connection.on('connected', () => {
-//   console.log('Mongoose is connected!!!');
-// });

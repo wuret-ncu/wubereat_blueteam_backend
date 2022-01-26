@@ -1,8 +1,17 @@
 var UserProfile = require('../models/UserProfile');
 // Import module into the application
 const crypto = require('crypto')
+
 // Creating salt for all users
 let salt = 'f844b09ff50c'
+var users = require('../users').items;
+const { eachLimit } = require('async');
+
+var findUser = function(name, password){
+  return users.find(function(item){
+      return item.NickName === name && item.Password === password;
+  });
+};
 
 exports.register = (req, res) => {
 
@@ -50,28 +59,50 @@ exports.register = (req, res) => {
         1000, 64, `sha512`).toString(`hex`);
         userdata.Password = hash
         UserProfile.findOne({NickName: userdata.NickName}, function(err, data) {
+          // if the nickname is unique 
           if(!data) {
-              // if the username and nickname are unique go ahead and create userData after hashing password and salt
-            UserProfile.create(userdata) 
-            .then(() => {
-              // after successfully creating userData display registered message
-              res.redirect("/login")
-            })
-            .catch(err => {
-              // if an error occured while trying to create userData, go ahead and display the error
-              res.send('error:' + err)
-            })
+            UserProfile.findOne({UserName: userdata.NickName}, function(err, data) {
+              // if the nickname is unique 
+              if(!data) {
+                UserProfile.findOne({NickName: userdata.UserName}, function(err, data) {
+                  // if the username is unique 
+                  if(!data) {
+                    // if the username and nickname are unique go ahead and create userData after hashing password and salt
+                    UserProfile.create(userdata) 
+                    .then(() => {
+                      // after successfully creating userData display registered message
+                      res.redirect("/login")
+                    })
+                    .catch(err => {
+                      // if an error occured while trying to create userData, go ahead and display the error
+                      res.send('error:' + err)
+                    })
+                  } else {
+                    // 當使用者輸入的 UserName 跟其他人的 NickName 相同
+                    res.status(400).send({
+                      status: 8,
+                      user: 'That user name already exisits in database!'
+                    });
+                  }
+                });
+              } else {
+                // 當使用者輸入的 NickName 跟其他人的 UserName 相同
+                res.status(400).send({
+                  status: 7,
+                  user: 'That nick name already exisits in database!'
+                });
+              }
+            });
           } else {
-            // if the username and nickname are not unique, display that username is already registered with an account
+            // 當使用者輸入的 NickName 跟其他人的 NickName 相同
             res.status(400).send({
               status: 3,
               user: 'That nick name already exisits!'
             });
           }
-        })
-        
+        });
       } else {
-        // if the username and nickname are not unique, display that username is already registered with an account
+        // 當使用者輸入的 UserName 跟其他人的 UserName 相同
         res.status(400).send({
           status: 4,
           user: 'That user name already exisits!'
@@ -85,52 +116,64 @@ exports.register = (req, res) => {
 };
 
 exports.getregister = (req, res) => {
-  UserProfile.find()
-        .then((data) => {
-            res.send(data);
-        })
-        .catch((err) => {
-            res.status(500).send({
-                store:
-                    err.store || "Some error occurred while retrieving users.",
-            });
-        });
+  res.render('register')
+  // UserProfile.find()
+  //       .then((data) => {
+  //           res.send(data);
+  //       })
+  //       .catch((err) => {
+  //           res.status(500).send({
+  //               store:
+  //                   err.store || "Some error occurred while retrieving users.",
+  //           });
+  //       });
 }
 
 exports.login = (req, res) => {
+  
+  var sess = req.session;
+  var user = findUser(req.body.NickName, req.body.Password);
+  let UserName = req.body.UserName,
+      NickName = req.body.NickName;
+  let conditions = !!UserName ? {UserName: UserName} : {NickName: NickName};
 
-  UserProfile.findOne({
-    // check to see if a username and password match like this is in the database
-    NickName: req.body.NickName,
-    // Password: crypto.pbkdf2Sync(req.body.Password, salt,  
-    //   1000, 64, `sha512`).toString(`hex`)
-  })
+
+  UserProfile.findOne(
+    conditions
+  //   {
+  //   // check to see if a username and password match like this is in the database
+  //   NickName: req.body.NickName,
+  //   // Password: crypto.pbkdf2Sync(req.body.Password, salt,  
+  //   //   1000, 64, `sha512`).toString(`hex`)
+  // }
+  )
     .then(user => {
       // if the username and password match exist in database then the user exists
       if (user) {
         if(user.Password == crypto.pbkdf2Sync(req.body.Password, salt,  
           1000, 64, `sha512`).toString(`hex`)) {
             const payload = {
-            NickName: user.NickName,  
-            Password: user.Password 
-          }
-          // after successful login display token and payload data
-          // res.redirect("/stores");
-          console.log("login")
-          res.send("login successful~")
+              NickName: user.NickName,  
+              Password: user.Password 
+            }
+            // req.session.rege
+            // after successful login display token and payload data
+            // res.redirect("/stores");
+            console.log("login")
+            res.send("login successful~")
         }
         else {
           res.status(400).send({
-            status: 5,
-            user:"Wrong password!"
+            status: 6,
+            user: 'Wrong password!'
           });
         }
       } 
       else {
         // if user cannot be found, display the message below
         res.status(400).send({
-          status: 6,
-          user:"This nick name is not regestered!"
+          status: 5,
+          user: 'This user name or nick name is not regestered!'
         });
       }
     })
@@ -168,6 +211,13 @@ exports.findOne = (req, res) => {
 }
 
 exports.logout = (req, res) => {
+  
+  // clear up session
   req.logout()
+
+  // add flash message
+  req.flash('success_msg', 'Logout successful!')
+
+  // redirect back to login page
   res.redirect('/login')
 }
