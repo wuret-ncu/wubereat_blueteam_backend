@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 var ShoppingCart = require('../models/ShoppingCart')
-const cartRepository = require('../repository/cart');
 
 exports.create = async (req, res) => {
     const cart = new ShoppingCart({
@@ -26,12 +25,13 @@ exports.create = async (req, res) => {
 exports.drawer = (req, res) => {
     let currentDate = new Date();   // 取得現在的日期＆時間
     currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
-    var userId = mongoose.Types.ObjectId('617b866fb32fcc5a5855e95c')
+    // var userId = mongoose.Types.ObjectId('617b866fb32fcc5a5855e95c')
+    const userId = req.userprofile._id    // 變數設定
     ShoppingCart.aggregate([
         // ↓ 顯示該用戶的點餐歷史紀錄 ↓ //
         {   
             $match: {
-                userprofiles: { "$in":  [userId] }
+                userprofiles: { "$in":  [userId] }  // 查詢條件
             }
         },
         {
@@ -95,7 +95,8 @@ exports.drawer = (req, res) => {
 };
 
 exports.history = (req, res) => {
-    var userId = mongoose.Types.ObjectId(req.params.userId)
+    const userId = req.userprofile._id    // 變數設定
+    // var userId = mongoose.Types.ObjectId(req.params.userId)
     ShoppingCart.aggregate([
         // ↓ 顯示該用戶的點餐歷史紀錄 ↓ //
         {   
@@ -166,7 +167,8 @@ exports.findOne = (req, res) => {
 };
 
 exports.findFavorite = (req, res) => {
-    var userId = mongoose.Types.ObjectId(req.params.userId)
+    const userId = req.userprofile._id    // 變數設定
+    // var userId = mongoose.Types.ObjectId(req.params.userId)
     ShoppingCart.aggregate([
         // ↓ 顯示該用戶"點過的所有店家"並計算"次數" ↓ //
         {   

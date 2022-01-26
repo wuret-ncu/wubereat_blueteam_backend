@@ -3,11 +3,15 @@ const mongoose = require("mongoose");
 const UserProfileSchema = new mongoose.Schema({
     UserName: {
         type: String,
-        required: true,
+        unique: true,
+        // required: true,
+        dropDups: true
     },
     NickName: {
         type: String,
-        required: true,
+        unique: true,
+        // required: true,
+        dropDups: true
     },
     Password: {
         type: String,
