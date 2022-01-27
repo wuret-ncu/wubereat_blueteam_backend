@@ -4,14 +4,6 @@ const crypto = require('crypto')
 
 // Creating salt for all users
 let salt = 'f844b09ff50c'
-var users = require('../users').items;
-const { eachLimit } = require('async');
-
-var findUser = function(name, password){
-  return users.find(function(item){
-      return item.NickName === name && item.Password === password;
-  });
-};
 
 exports.register = (req, res) => {
 
@@ -79,7 +71,7 @@ exports.register = (req, res) => {
                     })
                   } else {
                     // 當使用者輸入的 UserName 跟其他人的 NickName 相同
-                    res.status(400).send({
+                    return res.status(400).send({
                       status: 8,
                       user: 'That user name already exisits in database!'
                     });
@@ -87,7 +79,7 @@ exports.register = (req, res) => {
                 });
               } else {
                 // 當使用者輸入的 NickName 跟其他人的 UserName 相同
-                res.status(400).send({
+                return res.status(400).send({
                   status: 7,
                   user: 'That nick name already exisits in database!'
                 });
@@ -95,7 +87,7 @@ exports.register = (req, res) => {
             });
           } else {
             // 當使用者輸入的 NickName 跟其他人的 NickName 相同
-            res.status(400).send({
+            return res.status(400).send({
               status: 3,
               user: 'That nick name already exisits!'
             });
@@ -103,7 +95,7 @@ exports.register = (req, res) => {
         });
       } else {
         // 當使用者輸入的 UserName 跟其他人的 UserName 相同
-        res.status(400).send({
+        return res.status(400).send({
           status: 4,
           user: 'That user name already exisits!'
         });
@@ -131,8 +123,8 @@ exports.getregister = (req, res) => {
 
 exports.login = (req, res) => {
   
-  var sess = req.session;
-  var user = findUser(req.body.NickName, req.body.Password);
+  var session = req.session;
+
   let UserName = req.body.UserName,
       NickName = req.body.NickName;
   let conditions = !!UserName ? {UserName: UserName} : {NickName: NickName};
@@ -140,27 +132,41 @@ exports.login = (req, res) => {
 
   UserProfile.findOne(
     conditions
-  //   {
-  //   // check to see if a username and password match like this is in the database
-  //   NickName: req.body.NickName,
-  //   // Password: crypto.pbkdf2Sync(req.body.Password, salt,  
-  //   //   1000, 64, `sha512`).toString(`hex`)
-  // }
   )
     .then(user => {
       // if the username and password match exist in database then the user exists
       if (user) {
         if(user.Password == crypto.pbkdf2Sync(req.body.Password, salt,  
           1000, 64, `sha512`).toString(`hex`)) {
-            const payload = {
-              NickName: user.NickName,  
-              Password: user.Password 
-            }
-            // req.session.rege
-            // after successful login display token and payload data
-            // res.redirect("/stores");
-            console.log("login")
-            res.send("login successful~")
+            session.regenerate(function(err) {
+              if(err) {
+                return res.status(400).send({
+                  status: 9,
+                  user: 'login failed...'
+                });
+              }
+              req.session.User = user.NickName;
+
+              const payload = {
+                NickName: user.NickName,  
+                Password: user.Password 
+              }
+
+              console.log("login")
+              console.log(session)
+              console.log(req.sessionID)
+
+              // after successful login display token and payload data
+              // res.redirect("/stores");
+              
+              res.status(200).send(
+                `Hi~${NickName}, welcome <a href=\'/logout'><br>click to logout</a>`
+              //   {
+              //   status: 10,
+              //   user: 'login successful!'
+              // }
+              );
+            });
         }
         else {
           res.status(400).send({
@@ -184,12 +190,17 @@ exports.login = (req, res) => {
 
 }
 
-exports.getlogin = (req, res) => {
+exports.getlogin = (req, res) => {   
+if(req.session.User !== null){
+      req.User = req.session.User; 
+  }
+   
+  //  res.render('index', req);
   res.render('login')
 }
 
 exports.findOne = (req, res) => {
-  UserProfile.findById(req.params.userId)
+  UserProfile.findById(req.session.User)
     .then((data) => {
       if(!data) {
         return res.status(404), send({
@@ -211,13 +222,19 @@ exports.findOne = (req, res) => {
 }
 
 exports.logout = (req, res) => {
-  
-  // clear up session
-  req.logout()
 
-  // add flash message
-  req.flash('success_msg', 'Logout successful!')
+  req.session.destroy(function(err) {
+    if(err) {
+      res.status(400).send({
+        status: 11,
+        user: 'logout failed...'
+      });
+      return;
+    }
+    console.log('session destroyed!')
 
-  // redirect back to login page
-  res.redirect('/login')
+    res.clearCookie('User');
+    // redirect back to login page
+    res.redirect('/login')
+  })
 }

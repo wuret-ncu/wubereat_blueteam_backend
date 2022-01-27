@@ -13,22 +13,26 @@ const usePassport = require('./config/passport')
 // Initialize the express app
 const app = express();
 const PORT = process.env.PORT || 8080;
+var corseOptions = {
+    origin: "*",
+    credentials: true,
+};
+app.use(cors(corseOptions));
 
 require("./config/mongoose")(app);
 
 // Add the Express-session options
 // creating 24 hours from milliseconds
-const oneDay = 1000 * 60 * 60 * 24;
+// const oneDay = 1000 * 60 * 60 * 24;
 
 // session middleware
-var identityKey = 'skey';
 app.use(session({
-    name: identityKey,
-    secret: 'thisismysecrctekeyfhrgfgrfrty84fwir767',
-    store: new FileStore(),
-    cookie: { maxAge: oneDay },
-    resave: false,
-    saveUninitialized: true,
+    secret: 'thisismysecrctekeyfhrgfgrfrty84fwir767',    // 用來簽名存放在cookie的sessionID
+    name: 'User',    // 存放在cookie的key，如果不寫的話預設是connect.sid
+    // store: new FileStore(),
+    // cookie: { maxAge: oneDay },
+    saveUninitialized: false,    // 設定為false可以避免存放太多空的session進入session store, session在還沒被修改前也不會被存入cookie
+    resave: true,    // 因為每個session store會有不一樣的配置，有些會定期去清理session，如果不想要session被清理掉的話，就要把這個設定為true
 }))
 
 
@@ -44,11 +48,6 @@ app.use((req, res, next) => {
   })
 
 
-var corseOptions = {
-    origin: "*",
-    credentials: true,
-};
-app.use(cors(corseOptions));
 
 
 // Parse the HTML form
@@ -73,6 +72,11 @@ app.use('/images', express.static('images'));
 app.use(cookieParser());
 
 app.get('/', (req, res) => {
+
+    // 用console log來觀察這些變數
+    console.log(req.session)    // 透過req.session這個變數來取得session內容
+    console.log(req.sessionID)   // req.sessionID來取得session ID
+    
     res.json({ message: "Server is running 😉"});
 });
 
