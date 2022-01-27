@@ -163,7 +163,8 @@ exports.login = (req, res) => {
                 // `Hi~${NickName}, welcome <a href=\'/logout'><br>click to logout</a>`
                 {
                 status: 10,
-                user: 'login successful!'
+                user: 'login successful!',
+                token: req.sessionID
               }
               );
             });
