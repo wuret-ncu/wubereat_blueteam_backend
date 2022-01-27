@@ -159,12 +159,12 @@ exports.login = (req, res) => {
               // after successful login display token and payload data
               // res.redirect("/stores");
               
-              res.status(200).send(
-                `Hi~${NickName}, welcome <a href=\'/logout'><br>click to logout</a>`
-              //   {
-              //   status: 10,
-              //   user: 'login successful!'
-              // }
+              res.status(201).send(
+                // `Hi~${NickName}, welcome <a href=\'/logout'><br>click to logout</a>`
+                {
+                status: 10,
+                user: 'login successful!'
+              }
               );
             });
         }
