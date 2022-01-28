@@ -1,13 +1,18 @@
+const session = require('express-session');
 const mongoose = require('mongoose');
 var ShoppingCart = require('../models/ShoppingCart')
 
 exports.create = async (req, res) => {
+    console.log(req.session)
+    var session = req.session;
     const cart = new ShoppingCart({
         storeprofiles: req.body.storeprofiles,
-        userprofiles: req.session.User,
+        userprofiles: req.body.userprofiles,
         Meals: req.body.Meals,
         Price: req.body.Price
     });
+    // req.session.cart = cart;
+    // session.user  = cart.user;
             
     cart
         .save()
@@ -26,7 +31,8 @@ exports.drawer = (req, res) => {
     let currentDate = new Date();   // 取得現在的日期＆時間
     currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
     // var userId = mongoose.Types.ObjectId('617b866fb32fcc5a5855e95c')
-    const userId = req.session.User    // 變數設定
+    const userId = req.session.user._id    // 變數設定
+    console.log(req.session.user._id)
     ShoppingCart.aggregate([
         // ↓ 顯示該用戶的點餐歷史紀錄 ↓ //
         {   
@@ -95,6 +101,7 @@ exports.drawer = (req, res) => {
 };
 
 exports.history = (req, res) => {
+    // const user = ShoppingCart.find({User})
     const userId = req.session.User    // 變數設定
     // var userId = mongoose.Types.ObjectId(req.params.userId)
     ShoppingCart.aggregate([

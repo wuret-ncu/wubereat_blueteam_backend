@@ -3,12 +3,13 @@ const passport = require('passport')
 
 module.exports = (app) => {
   function auth(req, res, next) {
-    if (req.session.User) {
+    if (req.session.user) {
     console.log('authenticated')
+    res.status(200)
     next()
     } else {
     console.log('not authenticated')
-    return res.redirect('/login')
+    return res.status(204).redirect('/login')
     }
   }
     const App = require("../controllers/UserProfileController");
