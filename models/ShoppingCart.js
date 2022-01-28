@@ -4,7 +4,7 @@ let ShoppingCartSchema = new mongoose.Schema({
     userprofiles: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserProfile',
-        index: true,    // 實現「各使用者看到的是各自的畫面」功能 (把欄位設成索引，增加讀取效能)
+        // index: true,    // 實現「各使用者看到的是各自的畫面」功能 (把欄位設成索引，增加讀取效能)
         required: true,
     },
     storeprofiles: {

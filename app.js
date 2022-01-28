@@ -25,10 +25,13 @@ require("./config/mongoose")(app);
 // creating 24 hours from milliseconds
 // const oneDay = 1000 * 60 * 60 * 24;
 
+// cookie parser middleware
+app.use(cookieParser('thisismysecrctekeyfhrgfgrfrty84fwir767'));
+
 // session middleware
 app.use(session({
     secret: 'thisismysecrctekeyfhrgfgrfrty84fwir767',    // 用來簽名存放在cookie的sessionID
-    name: 'User',    // 存放在cookie的key，如果不寫的話預設是connect.sid
+    name: 'user',
     // store: new FileStore(),
     // cookie: { maxAge: oneDay },
     saveUninitialized: false,    // 設定為false可以避免存放太多空的session進入session store, session在還沒被修改前也不會被存入cookie
@@ -68,8 +71,6 @@ app.set("images", path.resolve(__dirname, "images"));
 app.set("view engine", "ejs");
 app.use('/images', express.static('images'));
 
-// cookie parser middleware
-app.use(cookieParser());
 
 app.get('/', (req, res) => {
 

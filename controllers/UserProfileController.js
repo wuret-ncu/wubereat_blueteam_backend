@@ -1,6 +1,7 @@
 var UserProfile = require('../models/UserProfile');
 // Import module into the application
 const crypto = require('crypto')
+const mongoose = require('mongoose');
 
 // Creating salt for all users
 let salt = 'f844b09ff50c'
@@ -145,7 +146,7 @@ exports.login = (req, res) => {
                   user: 'login failed...'
                 });
               }
-              req.session.User = user.NickName;
+              session.user = user.NickName;
 
               const payload = {
                 NickName: user.NickName,  
@@ -155,7 +156,7 @@ exports.login = (req, res) => {
               console.log("login")
               console.log(session)
               console.log(req.sessionID)
-
+              console.log(session.user)
               // after successful login display token and payload data
               // res.redirect("/stores");
               
@@ -201,7 +202,7 @@ if(req.session.User !== null){
 }
 
 exports.findOne = (req, res) => {
-  UserProfile.findById(req.session.User)
+  UserProfile.find({NickName:req.session.user})
     .then((data) => {
       if(!data) {
         return res.status(404), send({
@@ -213,11 +214,11 @@ exports.findOne = (req, res) => {
     .catch((err) => {
       if (err.kind === "String") {
         return res.status(404).send({
-            store: "Store not found with id" + req.params.storeId + ", because the type of data is not string.",
+            store: "Store not found with id" + req.session.user + ", because the type of data is not string.",
         });
       }
       return res.status(500).send({
-          store: "Store not found with id" + req.params.storeId,
+          store: "Store not found with " + req.session.user,
       });
     });
 }
@@ -234,7 +235,7 @@ exports.logout = (req, res) => {
     }
     console.log('session destroyed!')
 
-    res.clearCookie('User');
+    res.clearCookie('user');
     // redirect back to login page
     res.redirect('/login')
   })
