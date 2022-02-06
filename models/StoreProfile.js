@@ -24,8 +24,6 @@ let StoreProfileSchema = new mongoose.Schema({
     },
     RestDate: [{
         type: Array,
-        enum: ["Nan", "Mon", "Tue", "Wed", "Thu", "Fir", "Sat", "Sun"],
-        default: "Nan"
     }],
     MenuUrl: {
         type: String,
