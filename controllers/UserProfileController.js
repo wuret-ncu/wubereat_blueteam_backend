@@ -165,7 +165,8 @@ exports.login = (req, res) => {
                 {
                 status: 10,
                 user: 'login successful!',
-                token: req.sessionID
+                token: req.sessionID,
+                user: session.user
               }
               );
             });
@@ -235,7 +236,7 @@ exports.logout = (req, res) => {
     }
     console.log('session destroyed!')
 
-    res.clearCookie('user');
+    res.clearCookie('connect.sid');
     // redirect back to login page
     res.redirect('/login')
   })

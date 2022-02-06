@@ -31,11 +31,11 @@ app.use(cookieParser('thisismysecrctekeyfhrgfgrfrty84fwir767'));
 // session middleware
 app.use(session({
     secret: 'thisismysecrctekeyfhrgfgrfrty84fwir767',    // 用來簽名存放在cookie的sessionID
-    name: 'user',
+    // name: 'user',
     // store: new FileStore(),
     // cookie: { maxAge: oneDay },
     saveUninitialized: false,    // 設定為false可以避免存放太多空的session進入session store, session在還沒被修改前也不會被存入cookie
-    resave: true,    // 因為每個session store會有不一樣的配置，有些會定期去清理session，如果不想要session被清理掉的話，就要把這個設定為true
+    resave: false,    // 因為每個session store會有不一樣的配置，有些會定期去清理session，如果不想要session被清理掉的話，就要把這個設定為true
 }))
 
 
@@ -83,9 +83,9 @@ app.get('/', (req, res) => {
 
 // 掛載 middleware
 const { authenticator } = require('./middleware/auth')
-require("./routes/UserProfileRouter")(app, authenticator);
-require("./routes/StoreProfileRouter")(app, authenticator);
-require("./routes/ShoppingCartRouter")(app, authenticator);
+require("./routes/UserProfileRouter")(app);
+require("./routes/StoreProfileRouter")(app);
+require("./routes/ShoppingCartRouter")(app);
 
 // Listen on server
 app.listen(PORT, console.log(`Server is running at ${PORT}`));
