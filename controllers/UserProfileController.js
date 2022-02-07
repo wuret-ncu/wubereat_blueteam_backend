@@ -109,17 +109,17 @@ exports.register = (req, res) => {
 };
 
 exports.getregister = (req, res) => {
-  res.render('register')
-  // UserProfile.find()
-  //       .then((data) => {
-  //           res.send(data);
-  //       })
-  //       .catch((err) => {
-  //           res.status(500).send({
-  //               store:
-  //                   err.store || "Some error occurred while retrieving users.",
-  //           });
-  //       });
+  // res.render('register')
+  UserProfile.find()
+        .then((data) => {
+            res.send(data);
+        })
+        .catch((err) => {
+            res.status(500).send({
+                store:
+                    err.store || "Some error occurred while retrieving users.",
+            });
+        });
 }
 
 exports.login = (req, res) => {
@@ -166,7 +166,7 @@ exports.login = (req, res) => {
                 status: 10,
                 user: 'login successful!',
                 token: req.sessionID,
-                user: session.user
+                user: session.user,
               }
               );
             });
@@ -199,11 +199,14 @@ if(req.session.User !== null){
   }
    
   //  res.render('index', req);
-  res.render('login')
+  // res.render('login')
 }
 
 exports.findOne = (req, res) => {
-  UserProfile.find({NickName:req.session.user})
+  var session = req.session
+  const userId = req.session.passport.user
+  console.log(session.user)
+  UserProfile.find({userId})
     .then((data) => {
       if(!data) {
         return res.status(404), send({
@@ -215,11 +218,11 @@ exports.findOne = (req, res) => {
     .catch((err) => {
       if (err.kind === "String") {
         return res.status(404).send({
-            store: "Store not found with id" + req.session.user + ", because the type of data is not string.",
+            store: "User not found with id" + req.session.user + ", because the type of data is not string.",
         });
       }
       return res.status(500).send({
-          store: "Store not found with " + req.session.user,
+          store: "User not found with " + req.session.user,
       });
     });
 }
