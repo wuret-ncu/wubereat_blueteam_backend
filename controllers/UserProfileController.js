@@ -110,6 +110,7 @@ exports.register = (req, res) => {
 
 exports.getregister = (req, res) => {
   // res.render('register')
+  // 呈現所有以註冊的帳戶
   UserProfile.find()
         .then((data) => {
             res.send(data);
@@ -126,13 +127,12 @@ exports.login = (req, res) => {
   
   var session = req.session;
 
-  let UserName = req.body.UserName,
-      NickName = req.body.NickName;
-  let conditions = !!UserName ? {UserName: UserName} : {NickName: NickName};
+  let UserName = req.body.UserName || req.body.NickName;
+  let conditions = !!UserName ? {UserName: UserName} : {UserName: NickName};
 
 
   UserProfile.findOne(
-    conditions
+    UserName
   )
     .then(user => {
       // if the username and password match exist in database then the user exists
@@ -203,10 +203,10 @@ if(req.session.User !== null){
 }
 
 exports.findOne = (req, res) => {
-  var session = req.session
-  const userId = req.session.passport.user
-  console.log(session.user)
+  const userId = req.user._id
+  console.log(userId)
   UserProfile.find({userId})
+    .lean()
     .then((data) => {
       if(!data) {
         return res.status(404), send({

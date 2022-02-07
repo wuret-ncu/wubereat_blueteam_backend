@@ -86,6 +86,7 @@ const { authenticator } = require('./middleware/auth')
 require("./routes/UserProfileRouter")(app, authenticator);
 require("./routes/StoreProfileRouter")(app);
 require("./routes/ShoppingCartRouter")(app);
+require("./routes/GroupBuyRouter")(app);
 
 // Listen on server
 app.listen(PORT, console.log(`Server is running at ${PORT}`));

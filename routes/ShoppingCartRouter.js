@@ -1,10 +1,12 @@
 module.exports = (app) => {
     const App = require("../controllers/ShoppingCartController");
+    // Include authenticated function from auth
+    const { authenticator } = require('../middleware/auth')
     app.post("/carts", App.create);
-    app.get("/carts/drawer/:userId", App.drawer);
-    app.get("/carts/history/:userId", App.history);
+    app.get("/carts/drawer/:userId", authenticator, App.drawer);
+    app.get("/carts/history/:userId", authenticator, App.history);
     app.get("/cart/:cartId", App.findOne);
-    app.get("/users/:userId/favorite", App.findFavorite);
+    app.get("/users/:userId/favorite", authenticator, App.findFavorite);
     app.get("/bill", App.bill);
     app.get("/bill/user", App.user);
     app.delete("/:cartId", App.removeCart);
