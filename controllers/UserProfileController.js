@@ -128,12 +128,10 @@ exports.login = (req, res) => {
   var session = req.session;
 
   let UserName = req.body.UserName || req.body.NickName;
-  let conditions = !!UserName ? {UserName: UserName} : {UserName: NickName};
 
-
-  UserProfile.findOne(
-    UserName
-  )
+  UserProfile.findOne({
+    $or: [{UserName:UserName},{NickName:UserName}]
+  })
     .then(user => {
       // if the username and password match exist in database then the user exists
       if (user) {
@@ -146,10 +144,14 @@ exports.login = (req, res) => {
                   user: 'login failed...'
                 });
               }
+              session._id = user._id
               session.user = user.NickName;
+              session.name = user.UserName;
 
               const payload = {
-                NickName: user.NickName,  
+                // _id: user._id,
+                NickName: user.NickName,
+                UserName: user.UserName,
                 Password: user.Password 
               }
 
@@ -166,7 +168,9 @@ exports.login = (req, res) => {
                 status: 10,
                 user: 'login successful!',
                 token: req.sessionID,
-                user: session.user,
+                userId: session._id,
+                username: session.name,
+                nickname: session.user,
               }
               );
             });

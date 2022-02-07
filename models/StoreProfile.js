@@ -29,7 +29,8 @@ let StoreProfileSchema = new mongoose.Schema({
         type: String,
     },
     image: {
-        type: String
+        type: String,
+        required: false
     }
     // AverageScore: {
     //     type: Number,
