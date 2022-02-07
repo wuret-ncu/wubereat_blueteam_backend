@@ -24,7 +24,7 @@ require("./config/mongoose")(app);
 // Add the Express-session options
 // creating 24 hours from milliseconds
 // const oneDay = 1000 * 60 * 60 * 24;
-
+ 
 // cookie parser middleware
 app.use(cookieParser('thisismysecrctekeyfhrgfgrfrty84fwir767'));
 
@@ -83,9 +83,10 @@ app.get('/', (req, res) => {
 
 // 掛載 middleware
 const { authenticator } = require('./middleware/auth')
-require("./routes/UserProfileRouter")(app);
+require("./routes/UserProfileRouter")(app, authenticator);
 require("./routes/StoreProfileRouter")(app);
 require("./routes/ShoppingCartRouter")(app);
+require("./routes/GroupBuyRouter")(app);
 
 // Listen on server
 app.listen(PORT, console.log(`Server is running at ${PORT}`));

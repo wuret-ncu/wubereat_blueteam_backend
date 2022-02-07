@@ -20,7 +20,7 @@ let StoreProfileSchema = new mongoose.Schema({
     //     profile: mongoose.SchemaType.Url
     // },
     Phone: {
-        type: Number,
+        type: String,
     },
     RestDate: [{
         type: Array,

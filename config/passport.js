@@ -19,6 +19,7 @@ module.exports = app => {
         if (user.Password !== Password) {
           return done(null, false, { message: 'Nick name or Password incorrect.' })
         }
+        // if nickname/username and password are correct return passport user information.
         return done(null, user)
       })
       .catch(err => done(err, false))

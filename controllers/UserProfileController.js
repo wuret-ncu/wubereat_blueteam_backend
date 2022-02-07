@@ -109,30 +109,30 @@ exports.register = (req, res) => {
 };
 
 exports.getregister = (req, res) => {
-  res.render('register')
-  // UserProfile.find()
-  //       .then((data) => {
-  //           res.send(data);
-  //       })
-  //       .catch((err) => {
-  //           res.status(500).send({
-  //               store:
-  //                   err.store || "Some error occurred while retrieving users.",
-  //           });
-  //       });
+  // res.render('register')
+  // 呈現所有以註冊的帳戶
+  UserProfile.find()
+        .then((data) => {
+            res.send(data);
+        })
+        .catch((err) => {
+            res.status(500).send({
+                store:
+                    err.store || "Some error occurred while retrieving users.",
+            });
+        });
 }
 
 exports.login = (req, res) => {
   
   var session = req.session;
 
-  let UserName = req.body.UserName,
-      NickName = req.body.NickName;
-  let conditions = !!UserName ? {UserName: UserName} : {NickName: NickName};
+  let UserName = req.body.UserName || req.body.NickName;
+  let conditions = !!UserName ? {UserName: UserName} : {UserName: NickName};
 
 
   UserProfile.findOne(
-    conditions
+    UserName
   )
     .then(user => {
       // if the username and password match exist in database then the user exists
@@ -166,7 +166,7 @@ exports.login = (req, res) => {
                 status: 10,
                 user: 'login successful!',
                 token: req.sessionID,
-                user: session.user
+                user: session.user,
               }
               );
             });
@@ -199,11 +199,14 @@ if(req.session.User !== null){
   }
    
   //  res.render('index', req);
-  res.render('login')
+  // res.render('login')
 }
 
 exports.findOne = (req, res) => {
-  UserProfile.find({NickName:req.session.user})
+  const userId = req.user._id
+  console.log(userId)
+  UserProfile.find({userId})
+    .lean()
     .then((data) => {
       if(!data) {
         return res.status(404), send({
@@ -215,11 +218,11 @@ exports.findOne = (req, res) => {
     .catch((err) => {
       if (err.kind === "String") {
         return res.status(404).send({
-            store: "Store not found with id" + req.session.user + ", because the type of data is not string.",
+            store: "User not found with id" + req.session.user + ", because the type of data is not string.",
         });
       }
       return res.status(500).send({
-          store: "Store not found with " + req.session.user,
+          store: "User not found with " + req.session.user,
       });
     });
 }

@@ -1,10 +1,10 @@
 const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
-const Bill = require("../models/Bill")
+const GroupBuy = require("../models/GroupBuy")
 
 exports.create = (req, res) => {
     // var billId = "61bb05860d7cbb0604416f4d"
-    const bill = new Bill({
+    const bill = new GroupBuy({
         shoppingcarts: req.body.shoppingcarts
     });
             
@@ -23,7 +23,7 @@ exports.create = (req, res) => {
 
 exports.findAll = (req, res) => {
     // var billId = mongoose.Types.ObjectId("61bab569bbafd8e75ce10ca9")
-    Bill.aggregate([
+    GroupBuy.aggregate([
         {
             $match: {
                 billId: ObjectId("61baaf91155f64ef7aee51eb")
