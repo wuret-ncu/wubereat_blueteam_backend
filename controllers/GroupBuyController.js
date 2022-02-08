@@ -1,22 +1,28 @@
 const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
-const GroupBuy = require("../models/GroupBuy")
+const GroupBuy = require("../models/GroupBuy");
+const moment = require("moment")
 
 exports.create = (req, res) => {
-    // var billId = "61bb05860d7cbb0604416f4d"
-    const bill = new GroupBuy({
-        shoppingcarts: req.body.shoppingcarts
+    var date = new Date();  // dateStr you get from mongodb
+    // var d = date.getDate();
+    // var m = date.getMonth()+1;
+   const code = new GroupBuy({
+        user: req.body.user,
+        groupBuyCode: date
     });
             
-    bill
-        .push()
+    code
+        .save()
         .then((data) => {
+            
+            // data.user = user._id,
             res.send(data);
         })
         .catch((err) => {
             res.status(500).send({
                 bill:
-                    err.bill || "Some error occurred while creating the Bill.",
+                    err.bill || "Some error occurred while creating the GroupBuy.",
             });
         });
 }
