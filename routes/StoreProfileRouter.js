@@ -6,5 +6,5 @@ module.exports = (app) => {
     app.get("/store/:storeId", App.findOne);
     app.get("/stores/:type", App.findType);
     app.post("/store/:storeId", App.update);
-    app.delete("/store/:storeId", App.delete);
+    app.delete("/store/:storeId", multerInstance.upload.single('image'), App.delete);
   };

@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 const moment = require("moment");
-const DEFAULT_TIME_ZONE = 'Asia/Taipei';
-const DEFAULT_FORMAT_DATE_TIME = 'yyyy-MM-dd HH:mm:ss.SSS';
-const formatDateTime = (date) =>
-  format(utcToZonedTime(date, DEFAULT_TIME_ZONE), DEFAULT_FORMAT_DATE_TIME);
+const { ObjectId } = require("mongodb");
   const schemaOptions = {
     toObject: {
       getters: true,
@@ -25,6 +22,23 @@ const formatDateTime = (date) =>
     },
     runSettersOnQuery: true,
   };
+const OrderListSchema = new mongoose.Schema({
+    member: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'UserProfile',
+    },
+    // meal: {
+    //     type: String
+    // },
+    // spend: {
+    //     type: Number
+    // },
+    // date: {
+    //     type: String,
+    //     default: new Date(),
+    //     get: v => moment(v).format('YYYY-MM-DD')
+    // }
+})
   
 const GroupBuySchema = new mongoose.Schema({
     user: {
@@ -33,12 +47,14 @@ const GroupBuySchema = new mongoose.Schema({
         require: true
     },
     groupBuyCode: {
-        type: Date,
+        type: String,
         default: new Date(),
-        get: v => moment(v).format('MMDDhhmm')
-    }
+        // get: v => moment(v).format('MMDDhhmm')
+    },
+    orderList: [OrderListSchema]
 }, schemaOptions);
 
 // Compile Schema 變成 Model，如此可以透過這個 Model 建立和儲存 document
 // 會在 mongo 中建立名為 bill 的 collection
+// module.exports = mongoose.model('OrderList', OrderListSchema);
 module.exports = mongoose.model('GroupBuy', GroupBuySchema);
