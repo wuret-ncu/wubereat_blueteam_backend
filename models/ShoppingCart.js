@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 let ShoppingCartSchema = new mongoose.Schema({
+    groupbuycode: {
+        type: Number
+    },
     userprofiles: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserProfile',
@@ -19,8 +22,11 @@ let ShoppingCartSchema = new mongoose.Schema({
     Price: {
         type: Number,
         default: 0,
+    },
+    owe: {
+        type: Boolean,
+        default: true
     }
-    
 }, {
     timestamps: true
 });

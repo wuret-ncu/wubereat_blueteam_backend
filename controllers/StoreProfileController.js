@@ -186,16 +186,46 @@ exports.findType = (req, res) => {
 }
 
 exports.update = (req, res) => {
-    StoreProfile.findByIdAndUpdate((req.params.storeId),
-    { StoreType: req.body.StoreType, Phone: req.body.Phone, RestDate: req.body.RestDate, MenuUrl: req.body.MenuUrl }, 
-    function(err, data) {
+    // const StoreType = req.body.StoreType;
+    // const Phone = req.body.Phone;
+    // const RestDate = req.body.RestDate;
+    // const MenuUrl = req.body.MenuUrl;
+    // const image = req.file.filename;
+
+    
+    if (req.file) {
+        var updates = {
+            StoreType: req.body.StoreType,
+            Phone: req.body.Phone,
+            RestDate: req.body.RestDate,
+            MenuUrl: req.body.MenuUrl,
+            image: req.file.filename
+        }
+    } else {
+        var updates = {
+            StoreType: req.body.StoreType,
+            Phone: req.body.Phone,
+            RestDate: req.body.RestDate,
+            MenuUrl: req.body.MenuUrl,
+        }
+    }
+    var edit = StoreProfile.findByIdAndUpdate(req.params.storeId, updates);
+    // function(err, data) {
+    //     if (err) {
+    //         console.log(err);
+    //     } else {
+    //         res.send(data);
+    //         console.log("Store Profile Updated!");
+    //     }
+    // }
+    edit.exec(function(err, data) {
         if (err) {
-            console.log(err);
+            throw err;
         } else {
             res.send(data);
             console.log("Store Profile Updated!");
         }
-    });
+    })
 };
 
 exports.delete = (req, res) => {

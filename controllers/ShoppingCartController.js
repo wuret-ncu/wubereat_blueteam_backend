@@ -6,10 +6,12 @@ exports.create = async (req, res) => {
     // console.log(req.session)
     // var session = req.session;
     const cart = new ShoppingCart({
+        groupbuycode: req.body.groupbuycode,
         storeprofiles: req.body.storeprofiles,
         userprofiles: req.body.userprofiles,
         Meals: req.body.Meals,
-        Price: req.body.Price
+        Price: req.body.Price,
+        owe: req.body.owe
     });
     // req.session.cart = cart;
     // session.user  = cart.user;
@@ -244,12 +246,13 @@ exports.findFavorite = (req, res) => {
 }
 
 exports.bill = async (req, res) => {
-    let currentDate = new Date();   // 取得現在的日期＆時間
-    currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
+    const gp = req.body.groupbuycode;
+    // let currentDate = new Date();   // 取得現在的日期＆時間
+    // currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
     ShoppingCart.aggregate([
         {
             $match: {
-                createdAt: { $gte: currentDate }
+                groupbuycode: {$in: gp}
             }
         },
         {
