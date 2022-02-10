@@ -88,6 +88,7 @@ require("./routes/StoreProfileRouter")(app);
 require("./routes/ShoppingCartRouter")(app);
 require("./routes/GroupBuyRouter")(app);
 require("./routes/ScoreRouter")(app);
+require("./routes/CommentRouter")(app);
 
 // Listen on server
 app.listen(PORT, console.log(`Server is running at ${PORT}`));
