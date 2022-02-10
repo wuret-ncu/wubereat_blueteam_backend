@@ -30,12 +30,85 @@ exports.create = async (req, res) => {
 };
 
 exports.drawer = (req, res) => {
-    let currentDate = new Date();   // 取得現在的日期＆時間
-    currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
-    // var userId = mongoose.Types.ObjectId('617b866fb32fcc5a5855e95c')
+    // let currentDate = new Date();   // 取得現在的日期＆時間
+    // currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
+    var userId = mongoose.Types.ObjectId(req.params.userId)
+    var groupbuycode = req.params.id
     // const userId = req.session.user._id    // 變數設定
     // console.log(req.session.user._id)
-    const userId = req.user._id
+    // const userId = req.user._id
+    ShoppingCart.aggregate([
+        // ↓ 顯示該用戶的點餐歷史紀錄 ↓ //
+        // {   
+        //     $match: {
+        //         userprofiles: { "$in":  [userId] }  // 查詢條件
+        //     }
+        // },
+        {
+            $match: {
+                groupbuycode: groupbuycode
+            }
+        },
+        // {
+        //     $group: {
+        //         _id: "$userprofiles",
+        //         Order: { $push: "$$ROOT"},
+        //     }
+        // },
+        // {
+        //     $unwind: "$Order"
+        // },
+        // {
+        //     $lookup: {
+        //         from: "storeprofiles",
+        //         localField:"Order.storeprofiles",
+        //         foreignField:"_id",
+        //         as: "Store_info"
+        //     }
+        // },
+        // {
+        //     $unwind: "$Store_info"
+        // },
+        // {
+        //     $group: {
+        //         _id: '',
+        //         List: {
+        //             $push: {
+        //                 Store: "$Store_info",
+        //                 Order: "$Order",
+        //             }
+        //         },
+        //         Total: { $sum: "$Order.Price"},
+        //     }
+        // },
+        // {
+        //     $project: {
+        //         _id: 0,
+        //         List: {
+        //             Order: {
+        //                 Meals: 1,
+        //                 Price: 1
+        //             },
+        //             Store: {
+        //                 StoreName: 1
+        //             }
+        //         },
+        //         Total: 1
+        //     }
+        // },
+    ])
+    .exec((err, data)=>{
+        if(err) throw err;
+        console.log(data);
+        res.send(data)
+    })
+};
+
+exports.history = (req, res) => {
+    // const user = ShoppingCart.find({User})
+    // const userId = req.session.User    // 變數設定
+    var userId = mongoose.Types.ObjectId(req.params.userId)
+    // const userId = req.user._id
     ShoppingCart.aggregate([
         // ↓ 顯示該用戶的點餐歷史紀錄 ↓ //
         {   
@@ -43,14 +116,14 @@ exports.drawer = (req, res) => {
                 userprofiles: { "$in":  [userId] }  // 查詢條件
             }
         },
-        {
-            $match: {
-                createdAt: { $gte: currentDate }
-            }
-        },
+        // {
+        //     $match: {
+        //         createdAt: { $gte: currentDate }
+        //     }
+        // },
         {
             $group: {
-                _id: "",
+                _id: "$userprofiles",
                 Order: { $push: "$$ROOT"},
             }
         },
@@ -95,63 +168,55 @@ exports.drawer = (req, res) => {
                 Total: 1
             }
         },
+        // {   
+        //     $match: {
+        //         userprofiles: { "$in":  [userId] }
+        //     }
+        // },
+        // {
+        //     $lookup: {
+        //         from: "userprofiles",
+        //         localField:"userprofiles",
+        //         foreignField:"_id",
+        //         as: "User_info"
+        //     }
+        // },
+        // {
+        //     $lookup: {
+        //         from: "storeprofiles",
+        //         localField:"storeprofiles",
+        //         foreignField:"_id",
+        //         as: "Store_info"
+        //     }
+        // },
+        // // {
+        // //     $group: {
+        // //         _id: "$User_info",
+                
+        // //     }
+        // // },
+        // {
+        //     $sort: { createdAt: -1 }
+        // },
+        // {
+        //     $project: {
+        //         _id: 0,
+        //         Meals: 1,
+        //         Price: 1,
+        //         User_info: {
+        //             UserName: 1
+        //         },
+        //         Store_info: {
+        //             StoreName: 1
+        //         },
+        //         // Total: { $sum: "$Price"},
+        //     }
+        // }
     ])
     .exec((err, data)=>{
         if(err) throw err;
         console.log(data[0]);
         res.send(data[0])
-    })
-};
-
-exports.history = (req, res) => {
-    // const user = ShoppingCart.find({User})
-    // const userId = req.session.User    // 變數設定
-    // var userId = mongoose.Types.ObjectId(req.params.userId)
-    const userId = req.user._id
-    ShoppingCart.aggregate([
-        // ↓ 顯示該用戶的點餐歷史紀錄 ↓ //
-        {   
-            $match: {
-                userprofiles: { "$in":  [userId] }
-            }
-        },
-        {
-            $lookup: {
-                from: "userprofiles",
-                localField:"userprofiles",
-                foreignField:"_id",
-                as: "User_info"
-            }
-        },
-        {
-            $lookup: {
-                from: "storeprofiles",
-                localField:"storeprofiles",
-                foreignField:"_id",
-                as: "Store_info"
-            }
-        },
-        {
-            $sort: { createdAt: -1 }
-        },
-        {
-            $project: {
-                _id: 0,
-                Meals: 1,
-                Price: 1,
-                User_info: {
-                    UserName: 1
-                },
-                Store_info: {
-                    StoreName: 1
-                }
-            }
-        }
-    ])
-    .exec((err, data)=>{
-        if(err) throw err;
-        console.log(data);
-        res.send(data)
     })
 };
 
@@ -179,8 +244,8 @@ exports.findOne = (req, res) => {
 
 exports.findFavorite = (req, res) => {
     // const userId = req.session.User    // 變數設定
-    // var userId = mongoose.Types.ObjectId(req.params.userId)
-    const userId = req.user._id
+    var userId = mongoose.Types.ObjectId(req.params.userId)
+    // const userId = req.user._id
     ShoppingCart.aggregate([
         // ↓ 顯示該用戶"點過的所有店家"並計算"次數" ↓ //
         {   
@@ -391,3 +456,25 @@ exports.removeCart = async (req, res) => {
         });
     });
 }
+
+exports.personTotalPay = (req, res) => {
+    ShoppingCart.findById(req.params.userId)
+        .then((data) => {
+            if(!data) {
+                return res.status(404),send({
+                    user: "User not found with id " + req.params.userId,
+                });
+            }
+            res.send(data);
+        })
+        .catch((err) => {
+            if (err.kind === "String") {
+                return res.status(404).send({
+                    user: "User not found with id " + req.params.userId,
+                });
+            }
+            return res.status(500).send({
+                user: "User not found with id " + req.params.userId,
+            });
+        });
+};
