@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 var Score = require("../models/Score");
+const moment = require("moment");
 
 exports.post = async (req, res) => {
+    const date = new Date();
     const score = new Score({
         storeprofiles: req.body.storeprofiles,
         userprofiles: req.body.userprofiles,
-        Score: req.body.Score
+        Score: req.body.Score,
+        date: moment(date).format("YYYY/MM/DD hh:mm")
     });
     // req.session.cart = cart;
     // session.user  = cart.user;
@@ -65,15 +68,17 @@ exports.storeScore = (req, res) => {
                 score: {
                     Score: 1,
                     User: {
-                        UserName: 1
-                    }
+                        UserName: 1,
+                        NickName: 1
+                    },
+                    date: 1
                 }
             }
         },
     ])
     .exec((err, data)=>{
         if(err) throw err;
-        console.log(data[0]);
-        res.send(data[0])
+        console.log(data);
+        res.send(data)
     })
 }
