@@ -39,16 +39,16 @@ exports.drawer = (req, res) => {
     // const userId = req.user._id
     ShoppingCart.aggregate([
         // ↓ 顯示該用戶的點餐歷史紀錄 ↓ //
-        // {   
-        //     $match: {
-        //         userprofiles: { "$in":  [userId] }  // 查詢條件
-        //     }
-        // },
-        {
+        {   
             $match: {
-                groupbuycode: groupbuycode
+                userprofiles: { "$in":  [userId] }  // 查詢條件
             }
         },
+        // {
+        //     $match: {
+        //         groupbuycode: {"$in": [groupbuycode]}
+        //     }
+        // },
         // {
         //     $group: {
         //         _id: "$userprofiles",

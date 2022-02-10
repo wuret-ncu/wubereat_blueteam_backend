@@ -64,7 +64,12 @@ exports.register = (req, res) => {
                     UserProfile.create(userdata) 
                     .then(() => {
                       // after successfully creating userData display registered message
-                      res.redirect("/login")
+                      console.log("regist success!")
+                      res.send({
+                        status: 11,
+                        user: 'regist success!'
+                      })
+                      // res.redirect("/login")
                     })
                     .catch(err => {
                       // if an error occured while trying to create userData, go ahead and display the error
