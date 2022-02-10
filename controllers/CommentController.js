@@ -1,11 +1,14 @@
 const mongoose = require('mongoose');
 var Comment = require("../models/Comment");
+const moment = require("moment");
 
 exports.post = async (req, res) => {
+    const date = new Date();
     const comment = new Comment({
         storeprofiles: req.body.storeprofiles,
         userprofiles: req.body.userprofiles,
-        Comment: req.body.Comment
+        Comment: req.body.Comment,
+        date: moment(date).format("YYYY/MM/DD hh:mm"),
     });
     // req.session.cart = cart;
     // session.user  = cart.user;
@@ -63,8 +66,10 @@ exports.storeComment = (req, res) => {
                 comment: {
                     Comment: 1,
                     User: {
-                        UserName: 1
-                    }
+                        UserName: 1,
+                        NickName: 1
+                    },
+                    date: 1
                 }
             }
         },

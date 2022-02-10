@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const moment = require("moment");
 const { ObjectId } = require("mongodb");
-  const schemaOptions = {
+const schemaOptions = {
     toObject: {
       getters: true,
       virtuals: true,
@@ -21,7 +21,7 @@ const { ObjectId } = require("mongodb");
       }
     },
     runSettersOnQuery: true,
-  };
+};
 const OrderListSchema = new mongoose.Schema({
     member: {
         type: mongoose.Schema.Types.ObjectId,
