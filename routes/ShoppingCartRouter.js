@@ -3,7 +3,7 @@ module.exports = (app) => {
     // Include authenticated function from auth
     const { authenticator } = require('../middleware/auth')
     app.post("/carts", App.create);
-    app.get("/carts/drawer/:userId/:id", App.drawer);
+    app.get("/carts/drawer/:userId", App.drawer);
     app.get("/carts/history/:userId", App.history);
     app.get("/cart/:cartId", App.findOne);
     app.get("/users/:userId/favorite", App.findFavorite);
