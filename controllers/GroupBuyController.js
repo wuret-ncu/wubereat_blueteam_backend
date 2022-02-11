@@ -9,7 +9,7 @@ exports.create = (req, res) => {
     // var m = date.getMonth()+1;
    const code = new GroupBuy({
         user: req.body.user,
-        groupBuyCode: moment().format("MMDDhhmm"),
+        groupBuyCode: moment().format("MMDDmmss"),
     });
     code.orderList.push({
         member: req.body.user
