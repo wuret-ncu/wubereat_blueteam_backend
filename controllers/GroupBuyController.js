@@ -114,39 +114,24 @@ exports.addToGroup =async (req, res) => {
 
 exports.findAll = (req, res) => {
     // var billId = mongoose.Types.ObjectId("61bab569bbafd8e75ce10ca9")
-    GroupBuy.aggregate([
-        {
-            $match: {
-                billId: ObjectId("61baaf91155f64ef7aee51eb")
-            }
-        },
-        {
-            $group: {
-                _id: {
-                    "$toDate": {
-                        "$subtract": [
-                            { "$toLong": { "$toDate": "$_id" }  },
-                            { "$mod": [ { "$toLong": { "$toDate": "$_id" } }, 1000 * 60 * 15 ] }  // group result by 15 mins time interval in the shoppingcart.
-                        ]
-                    }
-                },
-                shoppingcarts: { 
-                    $push: { "$first": "$shoppingcarts" }
-                },
-            }
-        },
-        {
-            $lookup: {
-                from: "shoppingcarts",
-                localField:"shoppingcarts",
-                foreignField:"_id",
-                as: "Carts_info"
-            }
-        },
-    ])
-    .exec((err, data)=>{
-        if(err) throw err;
-        console.log(data);
-        res.send(data)
+    console.log(req.params.id)
+    GroupBuy.find({"groupBuyCode": req.params.id}, {_id: 0, user: 1}).populate({path: 'user', select: 'UserName-_id'})
+    .then((data) => {
+        if(!data) {
+            return res.status(404),send({
+                cart: "Not found.",
+            });
+        }
+        res.send(data);
     })
+    .catch((err) => {
+        if (err.kind === "String") {
+            return res.status(404).send({
+                cart: "Not found.",
+            });
+        }
+        return res.status(500).send({
+            cart: "Not found.",
+        });
+    });
 }

@@ -35,7 +35,7 @@ exports.drawer = (req, res) => {
     var userId = mongoose.Types.ObjectId(req.params.userId)
     var groupbuycode = req.params.id
     // console.log(req.params.id)
-    ShoppingCart.find({userprofiles: userId, groupbuycode: groupbuycode}, {_id: 0, storeprofiles: 1, Meals: 1, Price: 1}).populate({path: 'storeprofiles', select: 'StoreName'})
+    ShoppingCart.find({userprofiles: userId, groupbuycode: groupbuycode}, {_id: 0, storeprofiles: 1, Meals: 1, Price: 1}).populate({path: 'storeprofiles', select: 'StoreName-_id'})
     .then((data) => {
         if(!data) {
             return res.status(404),send({
@@ -288,32 +288,52 @@ exports.bill = async (req, res) => {
 }
 
 exports.user = (req, res) => {
-    let currentDate = new Date();   // 取得現在的日期＆時間
-    currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
+    var groupbuycode = req.params.id
+    // ShoppingCart.find({groupbuycode: groupbuycode}, {_id: 0, userprofiles: 1}).group('userprofiles').populate({path: 'userprofiles', select: 'UserName'})
+    // .then((data) => {
+    //     if(!data) {
+    //         return res.status(404),send({
+    //             cart: "Not found.",
+    //         });
+    //     }
+    //     res.send(data);
+    // })
+    // .catch((err) => {
+    //     if (err.kind === "String") {
+    //         return res.status(404).send({
+    //             cart: "Not found.",
+    //         });
+    //     }
+    //     return res.status(500).send({
+    //         cart: "Not found.",
+    //     });
+    // });
+    // let currentDate = new Date();   // 取得現在的日期＆時間
+    // currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
     ShoppingCart.aggregate([
-        {
-            $match: {
-                createdAt: { $gte: currentDate }
-            }
-        },
         {
             $group: {
                 _id: "$userprofiles",
-                userprofiles: {"$first": "$userprofiles"}
+                // userprofiles: {"$first": "$userprofiles"}DS
             }
         },
+        // {
+        //     $match: {
+        //         groupbuycode: groupbuycode
+        //     }
+        // },
         {
             $lookup: {
                 from: "userprofiles",
-                localField:"userprofiles",
+                localField:"_id",
                 foreignField:"_id",
-                as: "User_info"
+                as: "User"
             }
         },
         {
             $project: {
                 _id: 0,
-                User_info: {
+                User: {
                     UserName: 1
                 }
             }
