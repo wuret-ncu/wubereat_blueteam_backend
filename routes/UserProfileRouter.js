@@ -15,4 +15,5 @@ module.exports = (app) => {
     );
     app.get("/user", authenticator, App.findOne);
     app.get("/logout", App.logout);
+    app.post("/user/:userId", App.updateProfile);
   }
