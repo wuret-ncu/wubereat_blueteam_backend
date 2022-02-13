@@ -66,8 +66,10 @@ exports.findAll = (req, res) => {
 exports.findOne = async (req, res) => {
     var storeId = req.params.storeId
 	StoreProfile.findById(storeId).then((result) => {
-        const dirname = path.resolve();
-		return res.sendFile(path.join(dirname, '/images/' + result.image));
+        res.send(result);
+        console.log(result);
+        // const dirname = path.resolve();
+		// return res.sendFile(path.join(dirname, '/images/' + result.image));
 	}).catch((e) =>  res.send(e) );
 };
 
