@@ -73,6 +73,14 @@ exports.findOne = async (req, res) => {
 	}).catch((e) =>  res.send(e) );
 };
 
+exports.findMenu = async (req, res) => {
+    var storeId = req.params.storeId
+	StoreProfile.findById(storeId).then((result) => {
+        const dirname = path.resolve();
+		return res.sendFile(path.join(dirname, '/images/' + result.image));
+	}).catch((e) =>  res.send(e) );
+}
+
 exports.findType = (req, res) => {
     StoreProfile.aggregate([
         {
