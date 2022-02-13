@@ -51,7 +51,7 @@ exports.addToGroup =async (req, res) => {
 exports.findAll = (req, res) => {
     // var billId = mongoose.Types.ObjectId("61bab569bbafd8e75ce10ca9")
     console.log(req.params.id)
-    GroupBuy.find({"groupBuyCode": req.params.id}, {_id: 0, user: 1}).populate({path: 'user', select: 'UserName-_id'})
+    GroupBuy.find({"groupBuyCode": req.params.id}, {_id: 0, user: 1}).populate({path: 'user', select: 'NickName-_id'})
     .then((data) => {
         if(!data) {
             return res.status(404),send({
