@@ -199,7 +199,7 @@ exports.update = (req, res) => {
             Phone: req.body.Phone,
             RestDate: req.body.RestDate,
             MenuUrl: req.body.MenuUrl,
-            image: req.file.filename
+            // image: req.file.filename
         }
     } else {
         var updates = {
@@ -209,7 +209,12 @@ exports.update = (req, res) => {
             MenuUrl: req.body.MenuUrl,
         }
     }
-    var edit = StoreProfile.findByIdAndUpdate(req.params.storeId, updates);
+    var edit = StoreProfile.findByIdAndUpdate(req.params.storeId, {
+        StoreType: req.body.StoreType,
+        Phone: req.body.Phone,
+        RestDate: req.body.RestDate,
+        MenuUrl: req.body.MenuUrl,
+    });
     // function(err, data) {
     //     if (err) {
     //         console.log(err);
