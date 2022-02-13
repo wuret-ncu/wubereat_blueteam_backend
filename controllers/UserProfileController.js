@@ -253,3 +253,16 @@ exports.logout = (req, res) => {
     res.redirect('/login')
   })
 }
+
+exports.updateProfile = (req, res) => {
+  UserProfile.findByIdAndUpdate((req.params.userId),
+  { UserName: req.body.UserName, NickName: req.body.NickName, Password: req.body.Password }, 
+  function(err, data) {
+      if (err) {
+          console.log(err);
+      } else {
+          res.send(data);
+          console.log("User Profile Updated!");
+      }
+  });
+};
