@@ -1,7 +1,4 @@
-const e = require('express');
 var StoreProfile = require('../models/StoreProfile');
-const multer = require('multer');
-const fs = require('fs');
 const path = require('path');
 
 exports.create = async (req, res) => {
