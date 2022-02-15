@@ -22,22 +22,11 @@ const schemaOptions = {
     },
     runSettersOnQuery: true,
 };
-const OrderListSchema = new mongoose.Schema({
+const MembersSchema = new mongoose.Schema({
     member: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserProfile',
     },
-    // meal: {
-    //     type: String
-    // },
-    // spend: {
-    //     type: Number
-    // },
-    // date: {
-    //     type: String,
-    //     default: new Date(),
-    //     get: v => moment(v).format('YYYY-MM-DD')
-    // }
 })
   
 const GroupBuySchema = new mongoose.Schema({
@@ -51,7 +40,7 @@ const GroupBuySchema = new mongoose.Schema({
         default: new Date(),
         // get: v => moment(v).format('MMDDhhmm')
     },
-    orderList: [OrderListSchema]
+    members: [MembersSchema]
 }, schemaOptions);
 
 // Compile Schema 變成 Model，如此可以透過這個 Model 建立和儲存 document
