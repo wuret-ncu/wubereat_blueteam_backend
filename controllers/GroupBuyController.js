@@ -1,12 +1,7 @@
-const { ObjectId } = require('mongodb');
-const mongoose = require('mongoose');
 const GroupBuy = require("../models/GroupBuy");
 const moment = require("moment");
 
 exports.create = (req, res) => {
-    var date = new Date();  // dateStr you get from mongodb
-    // var d = date.getDate();
-    // var m = date.getMonth()+1;
    const code = new GroupBuy({
         user: req.body.user,
         groupBuyCode: moment().format("MMDDmmss"),
@@ -18,27 +13,24 @@ exports.create = (req, res) => {
     code
         .save()
         .then((data) => {
-            // moment(data.groupBuyCode).format('MMDDhhmm');
-            // data.user = user._id,
             res.send(data);
         })
         .catch((err) => {
             res.status(500).send({
-                bill:
-                    err.bill || "Some error occurred while creating the GroupBuy.",
+                group:
+                    err.group || "Some error occurred while creating the Group Buy.",
             });
         });
 }
 
 exports.addToGroup =async (req, res) => {
-    const code = req.body.groupBuyCode;
-    GroupBuy.findOne({groupBuyCode: code}, function (err,b) {
+    GroupBuy.findOne({ groupBuyCode: req.body.groupBuyCode }, function (err,data) {
         if (err) throw err;
-        b.members.push(req.body);
-        b.save(function (err, batch) {
+        data.members.push(req.body);
+        data.save(function (err, data) {
             if (err) throw err;
-            console.log('Updated orderList!');
-            res.json(batch);
+            console.log('Add the member to group!');
+            res.json(data);
         })
     })
     if (Array.isArray(GroupBuy.members)) {
@@ -49,13 +41,11 @@ exports.addToGroup =async (req, res) => {
 }
 
 exports.findAll = (req, res) => {
-    // var billId = mongoose.Types.ObjectId("61bab569bbafd8e75ce10ca9")
-    // console.log(req.params.id)
-    GroupBuy.find({"groupBuyCode": req.params.id},{_id: 0, user: 0, groupBuyCode: 0}).populate({path: 'members', select: '-_id', populate: { path: 'member', select: 'NickName-_id'}})
+    GroupBuy.find({ "groupBuyCode": req.params.id }, { _id: 0, user: 0, groupBuyCode: 0 }).populate({ path: 'members', select: '-_id', populate: { path: 'member', select: 'NickName-_id' } })
     .then((data) => {
         if(!data) {
             return res.status(404),send({
-                cart: "Not found.",
+                member: "Not found.",
             });
         }
         res.send(data);
@@ -63,21 +53,32 @@ exports.findAll = (req, res) => {
     .catch((err) => {
         if (err.kind === "String") {
             return res.status(404).send({
-                cart: "Not found.",
+                member: "Not found.",
             });
         }
         return res.status(500).send({
-            cart: "Not found.",
+            member: "Not found.",
         });
     });
 }
 
-exports.leaveGroup = (req, res) => {
-    console.log("delete!!")
-    GroupBuy.updateOne({"groupBuyCode": req.params.id}, {$pull: { "members": { "member": req.params.memberId } } })
+exports.memberLeaveGroup = (req, res) => {
+    GroupBuy.updateOne({ "groupBuyCode": req.params.id }, { $pull: { "members": { "member": req.params.memberId } } })
     .exec((err, data)=>{
         if(err) throw err;
         console.log(data);
         res.send(data);
+    });
+}
+
+exports.headOfTheGroupLeave = (req, res) => {
+    GroupBuy.findOneAndDelete((req.params.leaderId),
+    function(err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(data);
+            console.log("Group Deleted!");
+        }
     });
 }
