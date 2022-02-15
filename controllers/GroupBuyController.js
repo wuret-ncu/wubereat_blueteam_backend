@@ -74,5 +74,10 @@ exports.findAll = (req, res) => {
 
 exports.leaveGroup = (req, res) => {
     console.log("delete!!")
-    GroupBuy.remove().exec();
+    GroupBuy.updateOne({"groupBuyCode": req.params.id}, {$pull: { "members": { "member": req.params.memberId } } })
+    .exec((err, data)=>{
+        if(err) throw err;
+        console.log(data);
+        res.send(data);
+    });
 }
