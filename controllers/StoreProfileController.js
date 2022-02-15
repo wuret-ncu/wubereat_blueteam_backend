@@ -28,26 +28,6 @@ exports.create = async (req, res) => {
             status: false,
         })
     }
-    // const store = new StoreProfile({
-    //     StoreType: req.body.StoreType,
-    //     StoreName: req.body.StoreName,
-    //     Phone: req.body.Phone,
-    //     RestDate: req.body.RestDate,
-    //     MenuUrl: req.body.MenuUrl,
-    //     image: req.file.buffer,
-    // });
-    // store
-    //     .save()
-    //     .then((data) => {
-    //         res.send(data);
-    //     })
-    //     .catch((err) => {
-    //         res.status(500).send({
-    //             status:1,
-    //             store:
-    //                 err.store || "Some error occurred while creating the Store.",
-    //         });
-    //     });
 };
 
 exports.findAll = (req, res) => {

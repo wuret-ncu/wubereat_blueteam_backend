@@ -11,7 +11,7 @@ exports.create = (req, res) => {
         user: req.body.user,
         groupBuyCode: moment().format("MMDDmmss"),
     });
-    code.orderList.push({
+    code.members.push({
         member: req.body.user
     })
             
@@ -34,24 +34,24 @@ exports.addToGroup =async (req, res) => {
     const code = req.body.groupBuyCode;
     GroupBuy.findOne({groupBuyCode: code}, function (err,b) {
         if (err) throw err;
-        b.orderList.push(req.body);
+        b.members.push(req.body);
         b.save(function (err, batch) {
             if (err) throw err;
             console.log('Updated orderList!');
             res.json(batch);
         })
     })
-    if (Array.isArray(GroupBuy.orderList)) {
-        GroupBuy.orderList.push(req.body);
+    if (Array.isArray(GroupBuy.members)) {
+        GroupBuy.members.push(req.body);
     } else {
-        GroupBuy.orderList = [req.body];
+        GroupBuy.members = [req.body];
     }
 }
 
 exports.findAll = (req, res) => {
     // var billId = mongoose.Types.ObjectId("61bab569bbafd8e75ce10ca9")
-    console.log(req.params.id)
-    GroupBuy.find({"groupBuyCode": req.params.id}, {_id: 0, user: 1}).populate({path: 'user', select: 'NickName-_id'})
+    // console.log(req.params.id)
+    GroupBuy.find({"groupBuyCode": req.params.id},{_id: 0, user: 0, groupBuyCode: 0}).populate({path: 'members', select: '-_id', populate: { path: 'member', select: 'NickName-_id'}})
     .then((data) => {
         if(!data) {
             return res.status(404),send({
@@ -73,13 +73,6 @@ exports.findAll = (req, res) => {
 }
 
 exports.leaveGroup = (req, res) => {
-    GroupBuy.deleteOne({ groupBuyCode: req.params.id },
-        function(err, data) {
-            if (err) {
-                console.log(err);
-            } else {
-                res.send(data);
-                console.log("Store Deleted!");
-            }
-        });
+    console.log("delete!!")
+    GroupBuy.remove().exec();
 }
