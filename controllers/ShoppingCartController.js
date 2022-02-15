@@ -1,4 +1,5 @@
 const session = require('express-session');
+const { Int32 } = require('mongodb');
 const mongoose = require('mongoose');
 var ShoppingCart = require('../models/ShoppingCart')
 
@@ -210,14 +211,16 @@ exports.findFavorite = (req, res) => {
     })
 }
 
-exports.bill = async (req, res) => {
-    const gp = req.body.groupbuycode;
+exports.shoppingcart = async (req, res) => {
+    const gp = req.params.id;
+    console.log(gp)
+    console.log(typeof(Int32(gp)))
     // let currentDate = new Date();   // 取得現在的日期＆時間
     // currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
     ShoppingCart.aggregate([
         {
             $match: {
-                groupbuycode: {$in: gp}
+                groupbuycode: { $in: [Int32(gp)] }
             }
         },
         {
