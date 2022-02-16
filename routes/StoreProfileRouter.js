@@ -6,6 +6,6 @@ module.exports = (app) => {
     app.get("/store/:storeId", App.findOne);
     app.get("/menu/:storeId", App.findMenu);
     app.get("/stores/:type", App.findType);
-    app.post("/store/:storeId", App.update);
+    app.post("/store/:storeId", multerInstance.upload.single('image'), App.update);
     app.delete("/store/:storeId", App.delete);
   };

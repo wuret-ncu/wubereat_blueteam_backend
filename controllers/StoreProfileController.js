@@ -74,16 +74,45 @@ exports.findType = (req, res) => {
 }
 
 exports.update = (req, res) => {
-    StoreProfile.findByIdAndUpdate((req.params.storeId),
-    { StoreType: req.body.StoreType, Phone: req.body.Phone, RestDate: req.body.RestDate, MenuUrl: req.body.MenuUrl }, 
-    function(err, data) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.send(data);
-            console.log("Store Profile Updated!");
-        }
-    });
+    const storeId = req.params.storeId;
+    const body = req.body;
+    const StoreType = body.StoreType;
+    const Phone = body.Phone;
+    const RestDate = body.RestDate;
+    const MenuUrl = body.MenuUrl;
+
+    const updates = {
+        StoreType,
+        Phone,
+        RestDate,
+        MenuUrl
+    };
+
+    if(req.file) {
+        const image = req.file.filename;
+        updates.image = image;
+    }
+
+    StoreProfile.findOneAndUpdate(storeId, {
+        $set: updates
+    }, {
+        new: true
+    }).then(data => {
+        res.send(data);
+        console.log("Store Profile Updated!");
+    }).catch(err => {
+        console.log(err);
+    })
+    // StoreProfile.findByIdAndUpdate((req.params.storeId),
+    // { StoreType: req.body.StoreType, Phone: req.body.Phone, RestDate: req.body.RestDate, MenuUrl: req.body.MenuUrl, image: req.file.filename }, 
+    // function(err, data) {
+    //     if (err) {
+    //         console.log(err);
+    //     } else {
+    //         res.send(data);
+    //         console.log("Store Profile Updated!");
+    //     }
+    // });
 };
 
 exports.delete = (req, res) => {
