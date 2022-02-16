@@ -264,6 +264,7 @@ exports.shoppingcart = async (req, res) => {
                 _id: 0,
                 TotalList: {
                     OrderList: {
+                        _id: 1,
                         Meals: 1,
                         Price: 1
                     },

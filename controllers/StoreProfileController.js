@@ -103,16 +103,6 @@ exports.update = (req, res) => {
     }).catch(err => {
         console.log(err);
     })
-    // StoreProfile.findByIdAndUpdate((req.params.storeId),
-    // { StoreType: req.body.StoreType, Phone: req.body.Phone, RestDate: req.body.RestDate, MenuUrl: req.body.MenuUrl, image: req.file.filename }, 
-    // function(err, data) {
-    //     if (err) {
-    //         console.log(err);
-    //     } else {
-    //         res.send(data);
-    //         console.log("Store Profile Updated!");
-    //     }
-    // });
 };
 
 exports.delete = (req, res) => {
