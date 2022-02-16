@@ -31,30 +31,83 @@ exports.create = async (req, res) => {
 };
 
 exports.drawer = (req, res) => {
-    // let currentDate = new Date();   // 取得現在的日期＆時間
-    // currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
-    var userId = mongoose.Types.ObjectId(req.params.userId)
-    var groupbuycode = req.params.id
-    // console.log(req.params.id)
-    ShoppingCart.find({userprofiles: userId, groupbuycode: groupbuycode}, {_id: 0, storeprofiles: 1, Meals: 1, Price: 1}).populate({path: 'storeprofiles', select: 'StoreName-_id'})
+    var userId = mongoose.Types.ObjectId(req.params.userId);
+    const gp = req.params.id;
+    ShoppingCart.aggregate([
+        {   
+            $match: {
+                userprofiles: { "$in":  [userId] }  // 查詢條件
+            }
+        },
+        {
+            $match: {
+                groupbuycode: { $in: [Int32(gp)] }
+            }
+        },
+        {
+            $group: {
+                _id: {"store":"$storeprofiles"},
+                TotalList: {"$push": "$$ROOT"},
+                storeprofiles: {"$first": "$storeprofiles"},
+                // storeprofiles: {"$first": "$storeprofiles"},
+                // userprofiles: {"$first": "$userprofiles"},
+            }
+        },
+        {
+            $lookup: {
+                from: "storeprofiles",
+                localField:"storeprofiles",
+                foreignField:"_id",
+                as: "Store"
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                TotalList: {
+                        Meals: 1,
+                },
+                subTotal: { $sum: "$TotalList.Price" },
+                Store: {
+                    StoreName: 1,
+                }
+            }
+        },
+    ])
+    .exec()   // 取得離現在時間一個小時內的資料，並顯示店名與點餐者名字
     .then((data) => {
-        if(!data) {
-            return res.status(404),send({
-                cart: "Not found.",
-            });
-        }
         res.send(data);
     })
     .catch((err) => {
-        if (err.kind === "String") {
-            return res.status(404).send({
-                cart: "Not found.",
-            });
-        }
-        return res.status(500).send({
-            cart: "Not found.",
+        res.status(500).send({
+            cart:
+                err.cart || "Some error occurred while retrieving carts.",
         });
     });
+    // let currentDate = new Date();   // 取得現在的日期＆時間
+    // currentDate.setHours(currentDate.getHours()-1);     // 將現在時間減一小時
+    // var userId = mongoose.Types.ObjectId(req.params.userId)
+    // var groupbuycode = req.params.id
+    // // console.log(req.params.id)
+    // ShoppingCart.find({userprofiles: userId, groupbuycode: groupbuycode}, {_id: 0, storeprofiles: 1, Meals: 1, Price: 1}).populate({path: 'storeprofiles', select: 'StoreName-_id'})
+    // .then((data) => {
+    //     if(!data) {
+    //         return res.status(404),send({
+    //             cart: "Not found.",
+    //         });
+    //     }
+    //     res.send(data);
+    // })
+    // .catch((err) => {
+    //     if (err.kind === "String") {
+    //         return res.status(404).send({
+    //             cart: "Not found.",
+    //         });
+    //     }
+    //     return res.status(500).send({
+    //         cart: "Not found.",
+    //     });
+    // });
 };
 
 exports.history = (req, res) => {
