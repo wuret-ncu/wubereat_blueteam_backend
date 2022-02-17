@@ -1,5 +1,6 @@
 var StoreProfile = require('../models/StoreProfile');
 const path = require('path');
+const { triggerAsyncId } = require('async_hooks');
 
 exports.create = async (req, res) => {
     try {
@@ -93,9 +94,7 @@ exports.update = (req, res) => {
         updates.image = image;
     }
 
-    StoreProfile.findOneAndUpdate(storeId, {
-        $set: updates
-    }, {
+    StoreProfile.findByIdAndUpdate(storeId, updates,{
         new: true
     }).then(data => {
         res.send(data);
