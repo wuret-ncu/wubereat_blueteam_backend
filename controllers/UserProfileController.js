@@ -255,14 +255,13 @@ exports.logout = (req, res) => {
 }
 
 exports.updateProfile = (req, res) => {
-  UserProfile.findByIdAndUpdate((req.params.userId),
-  { UserName: req.body.UserName, NickName: req.body.NickName, Password: req.body.Password }, 
-  function(err, data) {
-      if (err) {
-          console.log(err);
-      } else {
-          res.send(data);
-          console.log("User Profile Updated!");
-      }
-  });
+  UserProfile.findByIdAndUpdate(req.params.userId,
+  { UserName: req.body.UserName, NickName: req.body.NickName, Password: req.body.Password }, {
+    new: true
+  }).then(data => {
+    res.send(data);
+    console.log("User Profile Updated!");
+  }).catch(err => {
+      console.log(err);
+  })
 };
