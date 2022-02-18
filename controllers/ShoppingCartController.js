@@ -151,21 +151,21 @@ exports.history = (req, res) => {
                 Total: { $sum: "$Order.Price"},
             }
         },
-        // {
-        //     $project: {
-        //         _id: 0,
-        //         List: {
-        //             Order: {
-        //                 Meals: 1,
-        //                 Price: 1
-        //             },
-        //             Store: {
-        //                 StoreName: 1
-        //             }
-        //         },
-        //         Total: 1
-        //     }
-        // },
+        {
+            $project: {
+                _id: 0,
+                List: {
+                    Order: {
+                        Meals: 1,
+                        Price: 1
+                    },
+                    Store: {
+                        StoreName: 1
+                    }
+                },
+                Total: 1
+            }
+        },
     ])
     .exec((err, data)=>{
         if(err) throw err;
@@ -312,26 +312,26 @@ exports.shoppingcart = async (req, res) => {
                 as: "Store"
             }
         },
-        // {
-        //     $project: {
-        //         _id: 0,
-        //         TotalList: {
-        //             OrderList: {
-        //                 _id: 1,
-        //                 Meals: 1,
-        //                 Price: 1
-        //             },
-        //             User: {
-        //                 UserName: 1
-        //             }
-        //         },
-        //         Total: { $sum: "$TotalList.OrderList.Price"},
-        //         Store: {
-        //             StoreName: 1,
-        //             Phone: 1
-        //         },
-        //     }
-        // },
+        {
+            $project: {
+                _id: 0,
+                TotalList: {
+                    OrderList: {
+                        _id: 1,
+                        Meals: 1,
+                        Price: 1
+                    },
+                    User: {
+                        UserName: 1
+                    }
+                },
+                Total: { $sum: "$TotalList.OrderList.Price"},
+                Store: {
+                    StoreName: 1,
+                    Phone: 1
+                },
+            }
+        },
     ])
     .exec()   // 取得離現在時間一個小時內的資料，並顯示店名與點餐者名字
     .then((data) => {
